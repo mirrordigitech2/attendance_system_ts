@@ -31,6 +31,7 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="system">
           {/* sidebar */}
           <Sidenavbar />
+
           {/* main page */}
           <div className="p-8 w-full">{children}</div>
         </ThemeProvider>

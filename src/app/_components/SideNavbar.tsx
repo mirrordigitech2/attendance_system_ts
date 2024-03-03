@@ -19,7 +19,7 @@ export default function Sidenavbar({}: Props) {
     setIsCollapsed(!isCollapsed);
   }
   return (
-    <div className="relative min-w-[80] border-r px-3 pb-10 pt-12">
+    <div className="relative min-w-[80] border-r px-3 pb-10 pt-24">
       <div className="absolute right-[-20px] top-7">
         <Button
           onClick={toggleSidebar}

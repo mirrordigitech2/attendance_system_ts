@@ -1,9 +1,14 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useAuthContext } from "../../../context/auth";
 
 export default function Login() {
-  const [pass, setPass] = useState<string>("");
+  const { validateUser } = useAuthContext();
+
+  //const [pass, setPass] = useState<string>("");
+  const [error, setError] = useState<string>("");
+
   const validateForm = (pass: string): boolean => {
     if (pass === "123") {
       return true;
@@ -13,19 +18,33 @@ export default function Login() {
   };
 
   const router = useRouter();
+  /*
   const handlePassChange = (event: React.FormEvent<HTMLInputElement>) => {
     setPass((event.target as HTMLInputElement).value);
   };
+  */
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event?.preventDefault();
 
-    if (validateForm(pass)) {
-      router.push("/");
-    } else {
-      console.log("wrong password");
-      alert("WRONG PASSWORD");
-    }
+    const email: string = event.currentTarget.email.value;
+    const password: string = event.currentTarget.password.value;
+
+    validateUser(email, password)
+      .then((res: any) => {
+        console.log(res);
+        if (res == true) {
+          console.log("User logged in successfully");
+          setError("");
+          router.push("/");
+        } else {
+          console.log("Incorrect Email or Password!");
+          setError("Incorrect Email or Password!");
+        }
+      })
+      .catch((error: any) => {
+        console.log(error);
+      });
   };
 
   return (
@@ -69,9 +88,13 @@ export default function Login() {
                     name="password"
                     id="password"
                     placeholder="••••••••"
-                    onChange={handlePassChange}
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   />
+                </div>
+                <div>
+                  <p className="text-red-500 mt-1 text-sm text-center">
+                    {error}
+                  </p>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-start">

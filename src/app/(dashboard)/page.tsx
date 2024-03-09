@@ -1,7 +1,15 @@
-import React from "react";
+import SideNavbar from "@/components/SideNavbar";
+import { useAuthContext } from "@/context/auth";
+import React, { useEffect } from "react";
 
 type Props = {};
 
 export default function Dashboardpage({}: Props) {
-  return <div>Dashboard page </div>;
+  const { user } = useAuthContext();
+
+  return (
+    <div>
+      <div>Dashboard page</div>
+    </div>
+  );
 }

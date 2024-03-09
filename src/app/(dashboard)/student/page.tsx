@@ -1,4 +1,6 @@
-import PageTitle from "@/app/_components/PageTitle";
+"use client";
+
+import PageTitle from "@/components/PageTitle";
 import React from "react";
 
 type Props = {};

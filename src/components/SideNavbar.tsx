@@ -13,7 +13,7 @@ import { Nav } from "./ui/nav";
 import { Button } from "@/components/ui/button";
 type Props = {};
 
-export default function Sidenavbar({}: Props) {
+export default function SideNavbar({}: Props) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   function toggleSidebar() {
     setIsCollapsed(!isCollapsed);
@@ -39,20 +39,20 @@ export default function Sidenavbar({}: Props) {
             variant: "default",
           },
           {
-            title: "School",
+            title: "Schools",
             href: "/school",
 
             icon: School,
             variant: "ghost",
           },
           {
-            title: "Student",
+            title: "Students",
             href: "/student",
             icon: Book,
             variant: "ghost",
           },
           {
-            title: "User",
+            title: "Users",
             href: "/user",
 
             icon: Users2,

@@ -1,4 +1,7 @@
-import PageTitle from "@/app/_components/PageTitle";
+"use client";
+import PageTitle from "@/components/PageTitle";
+// import Ex from "@/components/ex";
+// import { Button } from "@/components/ui/button";
 import React from "react";
 
 type Props = {};

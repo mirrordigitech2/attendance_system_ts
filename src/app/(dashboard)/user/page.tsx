@@ -1,4 +1,6 @@
-import PageTitle from "@/app/_components/PageTitle";
+"use client";
+
+import PageTitle from "@/components/PageTitle";
 import React from "react";
 
 type Props = {};
@@ -6,7 +8,8 @@ type Props = {};
 export default function Userpage({}: Props) {
   return (
     <div>
-      <PageTitle title="User Page" />
+      <h1>hh</h1>
+      {/* <PageTitle title="User Page" /> */}
     </div>
   );
 }

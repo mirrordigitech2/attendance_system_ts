@@ -23,7 +23,7 @@ export default function Home() {
       {user && (
         <div className="mt-1 text-red-500 ">
           {user?.email} - {user?.role}
-          <p>Attendance System</p>
+          <p>Attendance System 333</p>
         </div>
       )}
     </main>

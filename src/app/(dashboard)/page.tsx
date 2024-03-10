@@ -1,4 +1,3 @@
-import SideNavbar from "@/components/SideNavbar";
 import { useAuthContext } from "@/context/auth";
 import React, { useEffect } from "react";
 

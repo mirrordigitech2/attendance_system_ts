@@ -1,6 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuthContext } from "../../../context/auth";
 
 export default function Login() {
@@ -36,7 +36,7 @@ export default function Login() {
         if (res == true) {
           console.log("User logged in successfully");
           setError("");
-          router.push("/");
+          router.push("/dashboard");
         } else {
           console.log("Incorrect Email or Password!");
           setError("Incorrect Email or Password!");
@@ -46,6 +46,17 @@ export default function Login() {
         console.log(error);
       });
   };
+
+  //TODO: use tokens or local storage to keep user data then do not let
+  //user enter login again if already logged in
+  // const { user } = useAuthContext();
+  // useEffect(() => {
+  //   if (user !== null) {
+  //     console.log(user);
+
+  //     router.push("/");
+  //   }s
+  // });
 
   return (
     <div>

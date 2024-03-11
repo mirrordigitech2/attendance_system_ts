@@ -1,9 +1,12 @@
+"use client";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 import SideNavbar from "../components/SideNavbar";
-import { AuthContextProvider } from "@/context/auth";
+import { AuthContextProvider, useAuthContext } from "@/context/auth";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,6 +20,13 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const router = useRouter();
+  const { user } = useAuthContext();
+  useEffect(() => {
+    if (user == null) {
+      router.push("/login");
+    }
+  });
   return (
     <html lang="en">
       <body
@@ -33,7 +43,15 @@ export default function RootLayout({
           {/* <SideNavbar /> */}
 
           {/* main page */}
-          <div className="p-8 w-full">{children}</div>
+          <div>
+            {user && (
+              <div className="mt-1 text-red-500 ">
+                {user?.email} - {user?.role}
+                <p>Attendance System 333</p>
+              </div>
+            )}
+            <div className="p-8 w-full">{children}</div>
+          </div>
         </AuthContextProvider>
       </body>
     </html>

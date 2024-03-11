@@ -30,7 +30,7 @@ export default function RootLayout({
       >
         <AuthContextProvider>
           {/* sidebar */}
-          <SideNavbar />
+          {/* <SideNavbar /> */}
 
           {/* main page */}
           <div className="p-8 w-full">{children}</div>

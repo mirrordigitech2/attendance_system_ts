@@ -1,7 +1,6 @@
 "use client";
 import { ColumnDef } from "@tanstack/react-table";
 import PageTitle from "@/components/PageTitle";
-import React from "react";
 import { DataTable } from "@/components/DataTable";
 import { Button } from "@/components/ui/button";
 type Props = {};

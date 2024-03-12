@@ -22,11 +22,11 @@ export default function RootLayout({
 }>) {
   const router = useRouter();
   const { user } = useAuthContext();
-  useEffect(() => {
-    if (user == null) {
-      router.push("/login");
-    }
-  });
+  // useEffect(() => {
+  //   if (user == null) {
+  //     router.push("/login");
+  //   }
+  // });
   return (
     <html lang="en">
       <body

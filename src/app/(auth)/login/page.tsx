@@ -32,7 +32,6 @@ export default function Login() {
 
     validateUser(email, password)
       .then((res: any) => {
-        console.log(res);
         if (res == true) {
           console.log("User logged in successfully");
           setError("");

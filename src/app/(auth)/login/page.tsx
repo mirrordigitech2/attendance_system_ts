@@ -3,32 +3,36 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAuthContext } from "../../../context/auth";
 
+import { ZodType, any, string, z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+type FormData = {
+  email: string;
+  password: string;
+};
 export default function Login() {
   const { validateUser } = useAuthContext();
-
-  //const [pass, setPass] = useState<string>("");
   const [error, setError] = useState<string>("");
 
-  const validateForm = (pass: string): boolean => {
-    if (pass === "123") {
-      return true;
-    } else {
-      return false;
-    }
-  };
+  const schema: ZodType<FormData> = z.object({
+    email: z.string().email(),
+    password: z.string().min(4).max(20),
+  });
 
-  const router = useRouter();
-  /*
-  const handlePassChange = (event: React.FormEvent<HTMLInputElement>) => {
-    setPass((event.target as HTMLInputElement).value);
-  };
-  */
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>({
+    resolver: zodResolver(schema),
+  });
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event?.preventDefault();
-
-    const email: string = event.currentTarget.email.value;
-    const password: string = event.currentTarget.password.value;
+  const submitData = (data: FormData) => {
+    // console.log("IT worked", data);
+    // router.push("/dashboard");
+    const { email, password } = data;
+    console.log(data.email);
 
     validateUser(email, password)
       .then((res: any) => {
@@ -45,6 +49,31 @@ export default function Login() {
         console.log(error);
       });
   };
+
+  // //const [pass, setPass] = useState<string>("");
+
+  // const validateForm = (pass: string): boolean => {
+  //   if (pass === "123") {
+  //     return true;
+  //   } else {
+  //     return false;
+  //   }
+  // };
+
+  const router = useRouter();
+  // /*
+  // const handlePassChange = (event: React.FormEvent<HTMLInputElement>) => {
+  //   setPass((event.target as HTMLInputElement).value);
+  // };
+  // */
+
+  // const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  //   event?.preventDefault();
+
+  //   const email: string = event.currentTarget.email.value;
+  //   const password: string = event.currentTarget.password.value;
+
+  // };
 
   //TODO: use tokens or local storage to keep user data then do not let
   //user enter login again if already logged in
@@ -68,8 +97,7 @@ export default function Login() {
               </h1>
               <form
                 className="space-y-4 md:space-y-6"
-                action="#"
-                onSubmit={handleSubmit}
+                onSubmit={handleSubmit(submitData)}
               >
                 <div>
                   <label
@@ -80,11 +108,15 @@ export default function Login() {
                   </label>
                   <input
                     type="email"
-                    name="email"
                     id="email"
+                    {...register("email")}
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="Email@domain.com"
                   />
+
+                  {errors.email && (
+                    <span className="text-red-500">{errors.email.message}</span>
+                  )}
                 </div>
                 <div>
                   <label
@@ -95,16 +127,19 @@ export default function Login() {
                   </label>
                   <input
                     type="password"
-                    name="password"
+                    {...register("password")}
                     id="password"
                     placeholder="••••••••"
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   />
+                  {errors.password && (
+                    <span className="text-red-500">
+                      {errors.password.message}
+                    </span>
+                  )}
                 </div>
                 <div>
-                  <p className="text-red-500 mt-1 text-sm text-center">
-                    {error}
-                  </p>
+                  <p className="text-red-500 mt-1 text-sm text-center"></p>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-start">

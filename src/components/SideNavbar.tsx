@@ -40,20 +40,20 @@ export default function SideNavbar({}: Props) {
           },
           {
             title: "Schools",
-            href: "/school",
+            href: "/schools",
 
             icon: School,
             variant: "ghost",
           },
           {
             title: "Students",
-            href: "/student",
+            href: "/students",
             icon: Book,
             variant: "ghost",
           },
           {
             title: "Users",
-            href: "/user",
+            href: "/users",
 
             icon: Users2,
             variant: "ghost",

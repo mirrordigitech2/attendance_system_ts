@@ -10,6 +10,17 @@ import styles from "./user.module.scss";
 import { collection, addDoc, getDocs } from "firebase/firestore";
 import { db } from "../../firebase";
 
+import { MoreHorizontal } from "lucide-react";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
 import {
   Drawer,
   DrawerClose,
@@ -54,12 +65,33 @@ export const columns: ColumnDef<User>[] = [
   },
 
   {
-    accessorKey: "action",
-    header: "Action",
+    header: "Actions",
+    id: "actions",
+    cell: ({ row }) => {
+      const users = row.original;
+
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuItem>Edit</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>Delete</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    },
   },
 ];
 
 interface User {
+  id: string;
   name: string;
   email: string;
   school: string;
@@ -79,6 +111,7 @@ export default function Userpage({}: Props) {
 
   //defining zod schema for form input validation
   const schema: ZodType<User> = z.object({
+    id: z.string(),
     name: z.string().min(1, { message: "Name is required!" }),
     email: z.string().email(),
     school: z.string().min(1, { message: "School is required!" }),
@@ -152,6 +185,7 @@ export default function Userpage({}: Props) {
       querySnapshot.forEach((doc) => {
         // console.log(doc.id);
         const userInfo: User = {
+          id: doc.data().id,
           name: doc.data().name,
           email: doc.data().email,
           school: doc.data().school,
@@ -188,6 +222,14 @@ export default function Userpage({}: Props) {
           </DrawerHeader>
           <div className={`${styles.formContainer} m-3`}>
             <form onSubmit={handleSubmit(submitData)}>
+              <label className="text-sm font-medium text-gray-900 dark:text-white m-auto p-1 mr-1 mt-2">
+                ID
+              </label>
+              <input
+                type="text"
+                className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                {...register("id")}
+              />
               <label className="text-sm font-medium text-gray-900 dark:text-white m-auto p-1 mr-1 mt-2">
                 Name
               </label>
@@ -240,7 +282,6 @@ export default function Userpage({}: Props) {
               <label className="text-sm font-medium text-gray-900 dark:text-white m-auto p-1 mr-1">
                 Admin/User
               </label>
-
               <select
                 className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 {...register("role")}
@@ -248,7 +289,7 @@ export default function Userpage({}: Props) {
                 <option value="user">User</option>
                 <option value="admin">Admin</option>
               </select>
-
+              \00 \{" "}
               {getError() !== "" && (
                 <p className="text-orange-800 text-center mt-3 mb-2">
                   {getError()}

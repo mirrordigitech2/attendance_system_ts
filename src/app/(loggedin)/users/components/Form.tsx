@@ -14,14 +14,16 @@ import {
 } from "firebase/firestore";
 import { db } from "@/app/firebase";
 import { schema } from "../utils/validation";
+import { useState } from "react";
 
 type Props = {
   onClose: () => void;
-  item?: User;
+  item?: User | null;
 };
 
 export const Form = (props: Props) => {
   const itemId = props.item?.id;
+
   //using react hook form and passing the zod schema to it
   //register function used to link the input data to the schema object
   const {
@@ -48,14 +50,15 @@ export const Form = (props: Props) => {
     try {
       if (itemId) {
         //editDoc
-        //await updateDoc();
+        await setDoc(doc(db, "users", itemId), { ...data }).then(() => {
+          console.log("Document updated successfully");
+        });
       } else {
-        await addDoc(collection(db, "users"), { ...data }); //TODO: change 'usersTest' to users collection
+        await addDoc(collection(db, "users"), { ...data }).then(() => {
+          console.log("Document added successfully");
+        });
       }
-      console.log("Document added successfully");
-      props.onClose(true);
-      //   getUsers();
-      //   setIsDrawerOpen(false);
+      props.onClose();
     } catch (error) {
       console.error("Error adding document: ", error);
     }

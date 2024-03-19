@@ -14,10 +14,10 @@ import { useState } from "react";
 
 type Props<T> = {
   form: React.ComponentType<{
-    item?: T;
+    item?: T | null;
     onClose: (refresh?: boolean) => void;
   }>;
-  item?: T;
+  item?: T | null;
   isOpen: boolean;
   onChange: (state: boolean) => void;
   onClose?: () => void;
@@ -29,6 +29,7 @@ export const FormDrawer = <T extends object>(props: Props<T>) => {
 
   const close = (refresh?: boolean) => {
     props.onChange(false);
+    //setRefresh(!refresh);
     //if (refresh) setRefresh();
   };
 

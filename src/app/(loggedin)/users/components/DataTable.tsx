@@ -16,7 +16,7 @@ import { MoreHorizontal } from "lucide-react";
 import { DataTable } from "@/components/DataTable";
 import { FormDrawer } from "@/components/FormDrawer";
 import { useState } from "react";
-import { Form } from "./Form";
+import { FormUsers } from "./Form";
 
 import { useUsers } from "../hooks/useUsers";
 
@@ -64,7 +64,7 @@ export const UsersDataTable = (props: Props) => {
       id: "actions",
       cell: ({ row }) => {
         const user1 = row.original;
-        console.log(user1);
+        // console.log(user1);
 
         return (
           <DropdownMenu>
@@ -103,11 +103,11 @@ export const UsersDataTable = (props: Props) => {
   };
 
   return (
-    <div className="container mx-auto py-10 m-3 w-full">
+    <div className="container mx-auto py-10 m-4 p-2  w-full">
       <FormDrawer
         isOpen={isDrawerOpen}
         onChange={setIsDrawerOpen}
-        form={Form}
+        form={FormUsers}
         item={editItem}
         onClose={() => {
           setEditItem(undefined);
@@ -116,12 +116,12 @@ export const UsersDataTable = (props: Props) => {
         }}
       />
       <Button
-        variant="default"
+        variant="outline"
         onClick={() => {
           setEditItem(undefined);
           setIsDrawerOpen(true);
         }}
-        className="m-3 p-2 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 border border-input bg-background"
+        className="m-1 p-4 inline-flex items-center justify-center whitespace-nowrap rounded-md  font-medium  "
       >
         Add User
       </Button>

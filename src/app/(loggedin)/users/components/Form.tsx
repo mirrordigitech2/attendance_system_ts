@@ -51,26 +51,6 @@ export const FormUsers = (props: Props) => {
     ...(props.item && { values: { ...props.item } }),
   });
 
-  // const {
-
-  //   register,
-  //   handleSubmit,
-  //   formState: { errors },
-  // } = useForm<UserForm>({
-  //   resolver: zodResolver(UserSchema),
-  //   ...(props.item && { values: { ...props.item } }),
-  // });
-  // const getError = (): string | undefined => {
-  //   if (errors.name) return errors.name.message;
-  //   else if (errors.email) return errors.email.message;
-  //   else if (errors.school) return errors.school.message;
-  //   else if (errors.courses) return errors.courses.message;
-  //   else if (errors.phone) return errors.phone.message;
-  //   else if (errors.idNum) return errors.idNum.message;
-  //   else if (errors.role) return errors.role.message;
-  //   else return "";
-  // };
-
   const submitData = async (data: UserForm) => {
     try {
       if (itemId) {
@@ -215,74 +195,5 @@ export const FormUsers = (props: Props) => {
         </form>
       </Form>
     </div>
-
-    // <main>
-    //   <form onSubmit={handleSubmit(submitData)}>
-    //     <label className="text-sm font-medium text-gray-900 dark:text-white m-auto p-1 mr-1 mt-2">
-    //       Name
-    //     </label>
-    //     <input
-    //       type="text"
-    //       className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-    //       {...register("name")}
-    //     />
-    //     <label className="text-sm font-medium text-gray-900 dark:text-white p-1 mr-1 mt-2">
-    //       Email
-    //     </label>
-    //     <input
-    //       type="email"
-    //       className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-    //       placeholder="Email@domain.com"
-    //       {...register("email")}
-    //     />
-    //     <label className="text-sm font-medium text-gray-900 dark:text-white m-auto p-1 mr-1">
-    //       School
-    //     </label>
-    //     <input
-    //       type="text"
-    //       className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-    //       {...register("school")}
-    //     />
-    //     <label className="text-sm font-medium text-gray-900 dark:text-white m-auto p-1 mr-1">
-    //       Courses
-    //     </label>
-    //     <input
-    //       type="text"
-    //       className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-    //       {...register("courses")}
-    //     />
-    //     <label className="text-sm font-medium text-gray-900 dark:text-white m-auto p-1 mr-1">
-    //       Phone Number
-    //     </label>
-    //     <input
-    //       type="number"
-    //       className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-    //       {...register("phone", { valueAsNumber: true })}
-    //     />
-    //     <label className="text-sm font-medium text-gray-900 dark:text-white m-auto p-1 mr-1">
-    //       ID
-    //     </label>
-    //     <input
-    //       type="number"
-    //       className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-    //       {...register("idNum", { valueAsNumber: true })}
-    //     />
-    //     <label className="text-sm font-medium text-gray-900 dark:text-white m-auto p-1 mr-1">
-    //       Admin/User
-    //     </label>
-    //     <select
-    //       className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-    //       {...register("role")}
-    //     >
-    //       <option value="user">User</option>
-    //       <option value="admin">Admin</option>
-    //     </select>
-    //     \00 \{" "}
-    //     {getError() !== "" && (
-    //       <p className="text-orange-800 text-center mt-3 mb-2">{getError()}</p>
-    //     )}
-    //     <Button>Submit</Button>
-    //   </form>
-    // </main>
   );
 };

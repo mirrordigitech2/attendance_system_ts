@@ -17,7 +17,7 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { db } from "../app/firebase";
+import { db } from "../lib/firebase";
 
 interface ContextProps {
   user: DocumentData | null;

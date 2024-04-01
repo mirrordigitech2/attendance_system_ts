@@ -9,8 +9,7 @@ export const UserSchema: ZodType<UserForm> = z.object({
   }),
   school: z.string().min(3, { message: "School is required!" }),
   courses: z.string().min(1, { message: "Course is required!" }),
-  // phone: z.string().min(10, { message: "Course is required!" }),
-  // idNum: z.number().min(9, { message: "Course is required!" }),
+
   phone: z.coerce
     .number({ invalid_type_error: "Phone Number is required" })
     .positive()

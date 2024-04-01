@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { User } from "@/lib/types";
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react";
+import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 
 import { DataTable } from "@/components/DataTable";
 import { FormDrawer } from "@/components/FormDrawer";
@@ -31,7 +31,17 @@ export const UsersDataTable = (props: Props) => {
   const columns: ColumnDef<User>[] = [
     {
       accessorKey: "name",
-      header: "Name",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Name
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
     },
     {
       accessorKey: "idNum",

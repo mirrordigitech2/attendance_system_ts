@@ -12,7 +12,7 @@ import {
   doc,
   setDoc,
 } from "firebase/firestore";
-import { db } from "@/app/firebase";
+import { db } from "@/lib/firebase";
 import { UserSchema } from "../utils/validation";
 import { useState } from "react";
 import {
@@ -52,6 +52,7 @@ export const FormUsers = (props: Props) => {
   });
 
   const submitData = async (data: UserForm) => {
+
     try {
       if (itemId) {
         //editDoc

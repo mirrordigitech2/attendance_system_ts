@@ -8,14 +8,21 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen w-full bg-white text-black flex">
+    <div className="min-h-screen w-full flex">
       {" "}
-      <SideNavbar />
-      <div className=" grid p-8 w-full h-full ">
-        <Head />
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="system"
+        enableSystem
+        disableTransitionOnChange
+      >
+        <SideNavbar />
+        <div className=" grid p-8 w-full h-full ">
+          <Head />
 
-        {children}
-      </div>
+          {children}
+        </div>{" "}
+      </ThemeProvider>
     </div>
   );
 }

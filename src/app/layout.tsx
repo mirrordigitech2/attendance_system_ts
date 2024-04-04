@@ -39,22 +39,22 @@ export default function RootLayout({
           }
         )}
       >
+        {" "}
         <AuthContextProvider>
           {/* sidebar */}
           {/* <SideNavbar /> */}
-
-          {/* main page */}
+          {/* main page */}{" "}
           <div>
+            {" "}
             {user && (
               <div className="mt-1 text-red-500 ">
                 {user?.email} - {user?.role}
                 <p>Attendance System 333</p>
               </div>
             )}
-
             <div className="p-8 w-full">{children} </div>
-          </div>
-        </AuthContextProvider>
+          </div>{" "}
+        </AuthContextProvider>{" "}
       </body>
     </html>
   );

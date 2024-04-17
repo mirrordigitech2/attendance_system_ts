@@ -1,14 +1,15 @@
-"use client";
-
 import PageTitle from "@/components/PageTitle";
-import React from "react";
 
-type Props = {};
+import { StudentsDataTable } from "./components/DataTable";
 
-export default function Studentpage({}: Props) {
+export default function StudentsPage() {
+  //state
+
   return (
     <div>
       <PageTitle title="Student Page" />
+
+      <StudentsDataTable />
     </div>
   );
 }

@@ -7,7 +7,7 @@ export function middleware(request: NextRequest) {
   if (pathname == "/") {
     console.log("hey its homepage");
     return NextResponse.redirect(new URL("/dashboard", request.url));
-  } else if (pathname == "/users") {
+  } else if (pathname == "/usersX") {
     if (!userCookie) {
       console.log(" its user");
       return NextResponse.redirect(new URL("/login", request.url));

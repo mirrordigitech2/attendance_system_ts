@@ -42,12 +42,13 @@ const LoginForm = () => {
   //     console.log(data);
   //   };
   const submitData = (data: FormData) => {
-    // console.log("IT worked", data);
+    console.log("IT worked", data);
     // router.push("/dashboard");
     const { email, password } = data;
     console.log(data.email);
+    console.log(data.password);
 
-    validateUser(email, password)
+    validateUser(data.email, data.password)
       .then((res: any) => {
         if (res == true) {
           console.log("User logged in successfully");

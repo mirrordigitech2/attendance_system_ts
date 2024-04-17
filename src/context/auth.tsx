@@ -38,11 +38,14 @@ export const AuthContextProvider = ({ children }: any) => {
     email: string,
     password: string
   ): Promise<boolean> => {
+    console.log("PASS: ", password);
+    const pass = Number(password);
+
     const userRef = collection(db, "users");
     const q = query(
       userRef,
       where("email", "==", email),
-      where("password", "==", password)
+      where("idNum", "==", pass)
     );
     const querySnapshot = await getDocs(q);
 

@@ -27,7 +27,7 @@ export const useUsers = () => {
         const querySnapshot = await getDocs(collection(db, "users"));
         const users: User[] = [];
         querySnapshot.forEach((doc) => {
-          console.log(doc.id);
+          // console.log(doc.id);
           const userInfo: User = {
             id: doc.id,
             name: doc.data().name,

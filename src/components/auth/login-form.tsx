@@ -21,6 +21,7 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { z } from "zod";
 import { useState } from "react";
+import axios from "axios";
 
 type FormData = {
   email: string;
@@ -29,6 +30,7 @@ type FormData = {
 const LoginForm = () => {
   const { validateUser } = useAuthContext();
   const [error, setError] = useState<string>("");
+  const [authenticatedEmail, setAuthenticatedEmail] = useState<string>("");
 
   const form = useForm<FormData>({
     resolver: zodResolver(LoginSchema),
@@ -41,27 +43,49 @@ const LoginForm = () => {
   //   const onSubmit = (data: z.infer<typeof LoginSchema>) => {
   //     console.log(data);
   //   };
-  const submitData = (data: FormData) => {
-    console.log("IT worked", data);
-    // router.push("/dashboard");
+  const submitData = async (data: FormData) => {
     const { email, password } = data;
-    console.log(data.email);
-    console.log(data.password);
+    console.log(email);
+    console.log(password);
 
-    validateUser(data.email, data.password)
-      .then((res: any) => {
-        if (res == true) {
-          console.log("User logged in successfully");
-          setError("");
-          router.push("/dashboard");
-        } else {
-          console.log("Incorrect Email or Password!");
-          setError("Incorrect Email or Password!");
-        }
-      })
-      .catch((error: any) => {
-        console.log(error);
+    // old method using cintext api auth
+    // validateUser(data.email, data.password)
+    //   .then((res: any) => {
+    //     if (res == true) {
+    //       console.log("User logged in successfully");
+    //       setError("");
+    //       router.push("/dashboard");
+    //     } else {
+    //       console.log("Incorrect Email or Password!");
+    //       setError("Incorrect Email or Password!");
+    //     }
+    //   })
+    //   .catch((error: any) => {
+    //     console.log(error);
+    //   });
+
+    // new method using server components, api route, POST request and JWT tokens
+    try {
+      //const response = await axios.post("/api/auth/login", { email, password });
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
       });
+
+      if (!response.ok) {
+        throw new Error("Failed to login");
+      }
+      const { email: authenticatedEmail } = await response.json();
+      console.log(response);
+      console.log(authenticatedEmail);
+      setAuthenticatedEmail(authenticatedEmail);
+      router.push("/dashboard");
+    } catch (error) {
+      console.error("Login failed:", error);
+    }
   };
   const router = useRouter();
 

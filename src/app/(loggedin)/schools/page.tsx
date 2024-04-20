@@ -1,14 +1,15 @@
-"use client";
 import PageTitle from "@/components/PageTitle";
-// import Ex from "@/components/ex";
-// import { Button } from "@/components/ui/button";
 
-type Props = {};
+import { SchoolsDataTable } from "./components/DataTable";
 
-export default function Schoolpage({}: Props) {
+export default function SchoolsPage() {
+  //state
+
   return (
     <div>
       <PageTitle title="School Page" />
+
+      <SchoolsDataTable />
     </div>
   );
 }

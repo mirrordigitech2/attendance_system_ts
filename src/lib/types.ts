@@ -20,5 +20,16 @@ export interface Student {
   courses: string;
 }
 
+export interface School {
+  id: string;
+  name: string;
+  location: string;
+  lecturer: string;
+  manager: string;
+  phone: number;
+  totalStudent: number;
+}
+
 export type UserForm = Omit<User, "id">;
 export type StudentForm = Omit<Student, "id">;
+export type SchoolForm = Omit<School, "id">;

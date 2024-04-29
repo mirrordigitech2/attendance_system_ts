@@ -1,3 +1,5 @@
+"use client";
+
 import { db } from "@/lib/firebase";
 import { User, UserForm } from "@/lib/types";
 import {
@@ -10,10 +12,14 @@ import {
   where,
   doc,
 } from "firebase/firestore";
+import { useSession } from "next-auth/react";
 
 import { useEffect, useState } from "react";
 
 export const useUsers = () => {
+  const { data: session } = useSession();
+  console.log("session inside table", session);
+
   const [users, setUsers] = useState<User[]>([]);
   const [refereshKey, setRefreshKey] = useState(0);
 

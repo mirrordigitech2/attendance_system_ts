@@ -9,7 +9,7 @@ import {
   signInWithCustomToken,
 } from "firebase/auth";
 import type { DefaultSession } from "next-auth";
-import { db } from "./firebase";
+import { auth, db } from "./firebase";
 import {
   DocumentData,
   QueryDocumentSnapshot,
@@ -43,7 +43,7 @@ export const authOptions: NextAuthOptions = {
           session.user.idNum = token.sub;
 
           const firebaseToken = await adminAuth.createCustomToken(
-            token.sub /* , { role: "admin" } */
+            String(token.sub) /* , { role: "admin" } */
           );
           console.log("firebaseToken", firebaseToken);
           session.firebaseToken = firebaseToken;
@@ -59,43 +59,47 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials): Promise</* User | null */ any> {
         const { email, password } = credentials as {
           email: string;
-          password: string | number;
+          password: string;
         };
 
         try {
           // query the firestore users collection for the user comparing the email and idNum
           //console.log("USER EMAIL: ", email);
-
-          /*
+          const pass = Number(password);
           const user = await adminDb
+
             .collection("users")
             .where("email", "==", email)
-            .where("idNum", "==", password)
+            .where("idNum", "==", pass)
             .get();
           console.log("user authorize", !user.empty);
-          */
-          const userRef = collection(db, "users");
-          const pass = Number(password);
-          const q = query(
-            userRef,
-            where("email", "==", email),
-            where("idNum", "==", pass)
-          );
-          const querySnapshot = await getDocs(q);
+          if (!user.empty) {
+            console.log("user.docs[0].data()", user.docs[0].data());
+            return user.docs[0].data();
+          }
+
+          // const userRef = collection(db, "users");
+          // const pass = Number(password);
+          // const q = query(
+          //   userRef,
+          //   where("email", "==", email),
+          //   where("idNum", "==", pass)
+          // );
+          // const querySnapshot = await getDocs(q);
           //console.log(querySnapshot);
           //console.log(querySnapshot.docs[0]);
 
-          let user: DocumentData | null = null;
-          if (querySnapshot.empty) {
-            user = null;
-          } else {
-            const userDoc = querySnapshot.docs[0];
-            user = userDoc.data();
-            //return true;
-            //console.log("USERDOC: ", userDoc);
-          }
+          // let user: DocumentData | null = null;
+          // if (querySnapshot.empty) {
+          //   user = null;
+          // } else {
+          //   const userDoc = querySnapshot.docs[0];
+          //   user = userDoc.data();
+          //   //return true;
+          //   //console.log("USERDOC: ", userDoc);
+          // }
 
-          console.log("USERNEW:", user);
+          // console.log("USERNEW:", user);
 
           // if the user exists, return the user
           /*
@@ -106,11 +110,11 @@ export const authOptions: NextAuthOptions = {
           */
 
           // if the user does not exist, return null
-          if (user) {
-            return user;
-          } else {
-            return null;
-          }
+          //   if (user) {
+          //     return user;
+          //   } else {
+          //     return null;
+          //   }
         } catch (error) {
           console.log(error);
           return null;

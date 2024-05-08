@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuth } from "@/app/context/AuthProvider";
 import { db } from "@/lib/firebase";
 import { User, UserForm } from "@/lib/types";
 import {
@@ -17,6 +18,10 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
 export const useUsers = () => {
+  const authContext = useAuth();
+  console.log("authContext  currentUser:", authContext?.currentUser);
+  console.log("authContext  isAdmin:", authContext?.isAdmin);
+
   const { data: session } = useSession();
   console.log("session inside table", session);
 

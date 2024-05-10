@@ -1,4 +1,4 @@
-import Avatar from "@/components/Avatar";
+import Avatar1 from "@/components/Avatar1";
 import PageTitle from "@/components/PageTitle";
 // import { useAuthContext } from "@/context/auth";
 // import { useAuthContext } from "../../context/auth";
@@ -14,7 +14,8 @@ export default function Dashboardpage({}: Props) {
       <div className="flex flex-col gap-5 w-full">
         <PageTitle title="Dashboard Page" />
         {/* {user?.email} - {user?.role} */}
-        <Avatar />
+        <h1>jjjjj</h1>
+        <Avatar1 />
       </div>
     </div>
   );

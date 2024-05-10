@@ -1,7 +1,8 @@
 "use client";
 
 // import { useAuthContext } from "../../app/context/auth";
-
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 import CardWrapper from "./card-wrapper";
 import {
   Form,
@@ -31,6 +32,11 @@ type FormData = {
 const LoginForm = () => {
   // const { validateUser } = useAuthContext();
   const [error, setError] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState("");
+
+  // const [errorMessage, dispatch] = useFormState(authenticate, undefined);
+  // const { pending } = useFormStatus();
+  const router = useRouter();
 
   const form = useForm<FormData>({
     resolver: zodResolver(LoginSchema),
@@ -46,38 +52,36 @@ const LoginForm = () => {
     const res = await signIn("credentials", {
       email,
       password,
-      callbackUrl: "/",
-      // redirect: false,
+      callbackUrl: "/dashboard",
+      redirect: false,
     });
     console.log("res", res);
+
+    if (res?.status === 200 && res?.ok) {
+      router.replace("/dashboard");
+    }
+    if (res?.status === 401) {
+      if (res?.error === "Credentials Signin") {
+        setErrorMessage("invalid credentials");
+      } else {
+        setErrorMessage(res?.error || "");
+      }
+    }
+
+    console.log(res?.status);
   };
-
-  // const submitData = (data: FormData) => {
-  //   console.log("IT worked", data);
-  //   // router.push("/dashboard");
-  //   const { email, password } = data;
-  //   console.log(data.email);
-  //   console.log(data.password);
-
-  //   validateUser(data.email, data.password)
-  //     .then((res: any) => {
-  //       if (res == true) {
-  //         console.log("User logged in successfully");
-  //         setError("");
-  //         router.push("/dashboard");
-  //       } else {
-  //         console.log("Incorrect Email or Password!");
-  //         setError("Incorrect Email or Password!");
-  //       }
-  //     })
-  //     .catch((error: any) => {
-  //       console.log(error);
-  //     });
-  // };
-  // const router = useRouter();
 
   return (
     <CardWrapper label="Login to your account" title="Login">
+      {errorMessage && (
+        <div className="w-full max-w-sm mb-4 p-2">
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>{errorMessage}</AlertDescription>
+          </Alert>
+        </div>
+      )}
       <Form {...form}>
         <form onSubmit={onSubmit} className="space-y-6">
           <div className="space-y-4">

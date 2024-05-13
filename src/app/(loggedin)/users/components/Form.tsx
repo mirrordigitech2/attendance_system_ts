@@ -33,6 +33,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { createUser, editUser } from "@/lib/action";
 
 type Props = {
   onClose: () => void;
@@ -41,7 +42,8 @@ type Props = {
 
 export const FormUsers = (props: Props) => {
   const itemId = props.item?.id;
-  // console.log(props.item);
+  const [loading, setLoading] = useState(false);
+  console.log(itemId);
 
   //using react hook form and passing the zod schema to it
   //register function used to link the input data to the schema object
@@ -52,21 +54,26 @@ export const FormUsers = (props: Props) => {
   });
 
   const submitData = async (data: UserForm) => {
-
+    setLoading(true);
     try {
       if (itemId) {
         //editDoc
-        await setDoc(doc(db, "users", itemId), { ...data }).then(() => {
-          console.log("Document updated successfully");
-        });
+        // await setDoc(doc(db, "users", itemId), { ...data }).then(() => {
+        //   console.log("Document updated successfully");
+        // });
+        const res = await editUser(itemId, data);
+        console.log(res);
       } else {
-        await addDoc(collection(db, "users"), { ...data }).then(() => {
-          console.log("Document added successfully");
-        });
+        // await addDoc(collection(db, "users"), { ...data }).then(() => {
+        //   console.log("Document added successfully");
+        // });
+        const res = await createUser(data);
+        console.log(res);
       }
       props.onClose();
     } catch (error) {
-      console.error("Error adding document: ", error);
+      setLoading(false);
+      // console.error("Error adding document: ", error);
     }
   };
 

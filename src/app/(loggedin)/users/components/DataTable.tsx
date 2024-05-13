@@ -19,6 +19,7 @@ import { useState } from "react";
 import { FormUsers } from "./Form";
 
 import { useUsers } from "../hooks/useUsers";
+import { deleteUser } from "@/lib/action";
 
 type Props = {};
 
@@ -26,7 +27,7 @@ export const UsersDataTable = (props: Props) => {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   const [editItem, setEditItem] = useState<User | null>();
 
-  const { users, refreshUsers, deleteUser } = useUsers();
+  const { users, refreshUsers } = useUsers();
 
   const columns: ColumnDef<User>[] = [
     {
@@ -107,7 +108,8 @@ export const UsersDataTable = (props: Props) => {
 
   const onDeleteItem = (item: User) => {
     if (window.confirm("Are you sure")) {
-      deleteUser(item);
+      deleteUser(item.id);
+
       () => refreshUsers;
     }
   };

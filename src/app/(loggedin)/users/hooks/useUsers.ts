@@ -19,11 +19,11 @@ import { useEffect, useState } from "react";
 
 export const useUsers = () => {
   const authContext = useAuth();
-  console.log("authContext  currentUser:", authContext?.currentUser);
-  console.log("authContext  isAdmin:", authContext?.isAdmin);
+  // console.log("authContext  currentUser:", authContext?.currentUser);
+  // console.log("authContext  isAdmin:", authContext?.isAdmin);
 
   const { data: session } = useSession();
-  console.log("session inside table", session);
+  // console.log("session inside table", session);
 
   const [users, setUsers] = useState<User[]>([]);
   const [refereshKey, setRefreshKey] = useState(0);

@@ -1,55 +1,45 @@
-'use server';
+"use server";
 
-import { cookies } from 'next/headers'
-import { redirect } from 'next/navigation'
-import { signInWithEmailAndPassword, signOut } from 'firebase/auth'
-import { auth } from './firebase'
+import { UserForm } from "./types";
+import { adminDb } from "./firebase_admin";
 
-export async function authenticate(_currentState: unknown, formData: FormData) {
-  const email = formData.get('email') as string;
-  const password = formData.get('password') as string;
-
-  // validate email and password
-  if (!email || !password) {
-    return { error: 'Email and password are required' };
-  }
-
+export async function deleteUser(id: string) {
+  console.log("id", id);
   try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    await adminDb.collection("users").doc(id).delete();
 
-    if (userCredential.user) {
-      console.log('userCredential', userCredential.user)
-      const token = await userCredential.user.getIdToken();
-      console.log('token', token)
-      cookies().set('Authorization', token);
-      cookies().set('User', JSON.stringify(userCredential.user));
-      // return userCredential.user;
-    }
-    // return null;
-  } catch (error: { code: string, message: string } | any) {
-    const errorMessage = error?.message;
-    console.log(error)
-    return errorMessage;
+    return true;
+  } catch (error) {
+    console.error("Error updating user:", error);
+    // You can throw an error here or handle it based on your preference
+    throw new Error("Failed to update user");
   }
-
-  redirect('/');
-
-  // await signInWithEmailAndPassword(auth, email, password)
-  //   .then(userCredential => {
-  //     if (userCredential.user) {
-  //       console.log('userCredential', userCredential.user)
-  //       return userCredential.user;
-  //     }
-  //     return null;
-  //   })
-  //   .catch(error => {
-
-  //   })
 }
 
-export async function logout() {
-  await signOut(auth);
-  cookies().delete('Authorization');
-  cookies().delete('User');
-  redirect('/login');
+export async function editUser(
+  id: string,
+  formData: UserForm
+): Promise<boolean> {
+  console.log("id", id);
+  console.log("formData", formData);
+  try {
+    await adminDb.collection("users").doc(id).update(formData);
+
+    return true;
+  } catch (error) {
+    console.error("Error updating user:", error);
+    throw new Error("Failed to update user");
+  }
+}
+export async function createUser(formData: UserForm): Promise<boolean> {
+  console.log("formData", formData);
+  try {
+    await adminDb.collection("users").add(formData);
+
+    return true;
+  } catch (error) {
+    console.error("Error creating user:", error);
+
+    throw new Error("Failed to create user");
+  }
 }

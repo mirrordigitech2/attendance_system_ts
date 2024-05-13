@@ -10,8 +10,8 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     jwt: async ({ token, user, account, profile }) => {
-      console.log("user", user);
-      console.log("token", token);
+      // console.log("user", user);
+      // console.log("token", token);
       if (user) {
         return {
           ...token,
@@ -26,7 +26,7 @@ export const authOptions: NextAuthOptions = {
         // console.log("session.user", session.user);
         // console.log("token", token);
         if (token.sub) {
-          console.log("token.sub", token.sub);
+          // console.log("token.sub", token.sub);
           session.user.idNum = String(token.sub);
           session.user.role = token.role as "admin" | "user";
 
@@ -66,10 +66,10 @@ export const authOptions: NextAuthOptions = {
             .where("idNum", "==", pass)
             .get();
 
-          console.log("user authorize", !user.empty);
+          // console.log("user authorize", !user.empty);
 
           if (!user.empty) {
-            console.log("user.docs[0].data()", user.docs[0].data());
+            // console.log("user.docs[0].data()", user.docs[0].data());
             return user.docs[0].data();
           }
         } catch (error) {

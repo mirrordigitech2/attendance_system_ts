@@ -1,8 +1,10 @@
 import PageTitle from "@/components/PageTitle";
+import { withAuth } from "next-auth/middleware";
+import { NextApiRequest, NextApiResponse } from "next";
 
 import { UsersDataTable } from "./components/DataTable";
 
-export default function UsersPage() {
+function UsersPage() {
   //state
 
   return (
@@ -13,3 +15,5 @@ export default function UsersPage() {
     </div>
   );
 }
+
+export default UsersPage;

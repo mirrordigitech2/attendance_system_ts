@@ -6,7 +6,7 @@ export interface User {
   courses: string;
   phone: number;
   idNum: number;
-  role: "admin" | "user";
+  role: string;
 }
 
 export interface Student {

@@ -61,7 +61,7 @@ const LoginForm = () => {
       router.replace("/dashboard");
     }
     if (res?.status === 401) {
-      if (res?.error === "Credentials Signin") {
+      if (res?.error === "Credentials Sign in") {
         setErrorMessage("invalid credentials");
       } else {
         setErrorMessage(res?.error || "");

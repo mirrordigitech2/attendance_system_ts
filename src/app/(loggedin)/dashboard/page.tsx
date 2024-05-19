@@ -15,7 +15,7 @@ export default function Dashboardpage({}: Props) {
         <PageTitle title="Dashboard Page" />
         {/* {user?.email} - {user?.role} */}
         <h1>jjjjj</h1>
-        <Avatar1 />
+        {/* <Avatar1 /> */}
       </div>
     </div>
   );

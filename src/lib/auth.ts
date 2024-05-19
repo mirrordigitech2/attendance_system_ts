@@ -13,6 +13,7 @@ export const authOptions: NextAuthOptions = {
       // console.log("user", user);
       // console.log("token", token);
       if (user) {
+        console.log(user.role);
         return {
           ...token,
           sub: user.idNum,
@@ -23,22 +24,23 @@ export const authOptions: NextAuthOptions = {
     },
     session: async ({ session, token, user }) => {
       if (session.user) {
-        // console.log("session.user", session.user);
-        // console.log("token", token);
-        if (token.sub) {
-          // console.log("token.sub", token.sub);
-          session.user.idNum = String(token.sub);
-          session.user.role = token.role as "admin" | "user";
+        console.log("session.user", session.user);
+        console.log("token", token);
+        // if (token.sub) {
+        //   // console.log("token.sub", token.sub);
+        session.user.idNum = String(token.sub);
+        session.user.role = token.role as "admin" | "user";
+        console.log(token);
+        const firebaseToken = await adminAuth.createCustomToken(
+          String(token.sub),
 
-          const firebaseToken = await adminAuth.createCustomToken(
-            String(token.sub),
-            { role: token.role }
-          );
-          session.firebaseToken = firebaseToken;
-          await adminAuth.setCustomUserClaims(String(token.sub), {
-            role: token.role,
-          });
-        }
+          { role: token.role }
+        );
+        session.firebaseToken = firebaseToken;
+        // await adminAuth.setCustomUserClaims(String(token.sub), {
+        //   role: token.role,
+        // });
+        //}
       }
       return session;
     },
@@ -66,7 +68,7 @@ export const authOptions: NextAuthOptions = {
             .where("idNum", "==", pass)
             .get();
 
-          // console.log("user authorize", !user.empty);
+          console.log("user authorize", !user.empty);
 
           if (!user.empty) {
             // console.log("user.docs[0].data()", user.docs[0].data());

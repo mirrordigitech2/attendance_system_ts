@@ -22,9 +22,11 @@ interface NavProps {
     variant: "default" | "ghost";
     href: string;
   }[];
+
+  isAdmin?: boolean;
 }
 
-export function Nav({ links, isCollapsed }: NavProps) {
+export function Nav({ links, isCollapsed, isAdmin }: NavProps) {
   const Pathname = usePathname();
 
   return (

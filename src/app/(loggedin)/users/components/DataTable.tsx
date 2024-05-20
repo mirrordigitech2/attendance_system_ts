@@ -20,12 +20,28 @@ import { FormUsers } from "./Form";
 
 import { useUsers } from "../hooks/useUsers";
 import { deleteUser } from "@/lib/action";
+import { getFirestore, collection } from "firebase/firestore";
+import { useCollection } from "react-firebase-hooks/firestore";
+import { app } from "@/lib/firebase";
+import { useAuth } from "@/app/context/AuthProvider";
 
 type Props = {};
 
 export const UsersDataTable = (props: Props) => {
+  const authContext = useAuth();
+  console.log(authContext?.currentUser);
+  console.log("isAdmin", authContext?.isAdmin);
+  if (!authContext?.currentUser) {
+    return null;
+  }
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   const [editItem, setEditItem] = useState<User | null>();
+  const [value, loading, error] = useCollection(
+    collection(getFirestore(app), "hooks"),
+    {
+      snapshotListenOptions: { includeMetadataChanges: true },
+    }
+  );
 
   const { users, refreshUsers } = useUsers();
 

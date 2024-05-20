@@ -16,7 +16,7 @@ export const authOptions: NextAuthOptions = {
         console.log(user.role);
         return {
           ...token,
-          sub: user.idNum,
+          sub: user.id,
           role: user.role,
         };
       }
@@ -28,7 +28,7 @@ export const authOptions: NextAuthOptions = {
         console.log("token", token);
         // if (token.sub) {
         //   // console.log("token.sub", token.sub);
-        session.user.idNum = String(token.sub);
+        session.user.id = String(token.sub);
         session.user.role = token.role as "admin" | "user";
         console.log(token);
         const firebaseToken = await adminAuth.createCustomToken(
@@ -68,11 +68,14 @@ export const authOptions: NextAuthOptions = {
             .where("idNum", "==", pass)
             .get();
 
-          console.log("user authorize", !user.empty);
+          console.log("user authorize", user.empty);
 
           if (!user.empty) {
             // console.log("user.docs[0].data()", user.docs[0].data());
-            return user.docs[0].data();
+            return {
+              ...user.docs[0].data(),
+              id: user.docs[0].id,
+            };
           }
         } catch (error) {
           console.log(error);

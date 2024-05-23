@@ -43,7 +43,7 @@ type Props = {
 export const FormUsers = (props: Props) => {
   const itemId = props.item?.id;
   const [loading, setLoading] = useState(false);
-  console.log(itemId);
+  // console.log(itemId);
 
   //using react hook form and passing the zod schema to it
   //register function used to link the input data to the schema object

@@ -1,87 +1,77 @@
 "use client";
-
+import { useEffect, useState } from "react";
 import { useAuth } from "@/app/context/AuthProvider";
-import { db } from "@/lib/firebase";
-import { User, UserForm } from "@/lib/types";
+import { app, db } from "@/lib/firebase";
+import { User } from "@/lib/types";
 import {
-  addDoc,
-  deleteDoc,
   collection,
-  getDocs,
-  onSnapshot,
+  deleteDoc,
+  doc,
+  getFirestore,
   query,
   where,
-  doc,
 } from "firebase/firestore";
+import { useCollection } from "react-firebase-hooks/firestore";
 import { useSession } from "next-auth/react";
 
-import { useEffect, useState } from "react";
+interface UseUsersResult {
+  users: User[];
+  refreshUsers: () => void;
+  deleteUser: (user: User) => Promise<void>;
+  loading: boolean;
+  error: Error | undefined;
+}
 
-export const useUsers = () => {
-  const authContext = useAuth();
-  // console.log("authContext  currentUser:", authContext?.currentUser);
-  // console.log("authContext  isAdmin:", authContext?.isAdmin);
-
+export const useUsers = (): UseUsersResult => {
   const { data: session } = useSession();
-  // console.log("session inside table", session);
 
+  const currentUser = useAuth();
+
+  const isAdmin = useAuth();
   const [users, setUsers] = useState<User[]>([]);
-  const [refereshKey, setRefreshKey] = useState(0);
+  const [refreshKey, setRefreshKey] = useState(0);
 
+  // Define a Firestore collection reference
+  const usersCollectionRef = collection(db, "users");
+
+  // Apply a query if the user is not an admin, to filter users by email
+
+  const usersQuery = isAdmin
+    ? usersCollectionRef
+    : query(usersCollectionRef, where("email", "==", currentUser?.isAdmin));
+
+  // Use useCollection to fetch the data
+  // const [value, loading, error] = useCollection(usersQuery, {
+  //   snapshotListenOptions: { includeMetadataChanges: true },
+  // });
+  const [value, loading, error] = useCollection(
+    collection(getFirestore(app), "users"),
+    {
+      snapshotListenOptions: { includeMetadataChanges: true },
+    }
+  );
+
+  // Update the state when the value changes
+  useEffect(() => {
+    if (value) {
+      const fetchedUsers: User[] = value.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as User[];
+      setUsers(fetchedUsers);
+    }
+  }, [value]);
+
+  // Function to delete a user and refresh the list
   const deleteUser = async (user: User) => {
     await deleteDoc(doc(db, "users", user.id));
+    refreshUsers();
   };
 
-  useEffect(() => {
-    const getUsers = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(db, "users"));
-        const users: User[] = [];
-        querySnapshot.forEach((doc) => {
-          console.log(doc.id);
-          const userInfo: User = {
-            id: doc.id,
-            name: doc.data().name,
-            email: doc.data().email,
-            school: doc.data().school,
-            courses: doc.data().courses,
-            phone: doc.data().phone,
-            idNum: doc.data().idNum,
-            role: doc.data().role,
-          };
-          users.push(userInfo);
-        });
-        setUsers(users);
-      } catch (error) {
-        console.error("Error getting documents: ", error);
-      }
-    };
-    getUsers();
-
-    const q = query(collection(db, "users"));
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const updatedUsers: User[] = [];
-      querySnapshot.forEach((doc) => {
-        const updatedUserInfo: User = {
-          id: doc.id,
-          name: doc.data().name,
-          email: doc.data().email,
-          school: doc.data().school,
-          courses: doc.data().courses,
-          phone: doc.data().phone,
-          idNum: doc.data().idNum,
-          role: doc.data().role,
-        };
-        updatedUsers.push(updatedUserInfo);
-      });
-      setUsers(updatedUsers);
-    });
-
-    return () => unsubscribe();
-  }, [refereshKey]);
-
+  // Function to refresh the users
   const refreshUsers = () => {
     setRefreshKey((prevKey) => prevKey + 1);
   };
-  return { users, refreshUsers, deleteUser };
+
+  return { users, refreshUsers, deleteUser, loading, error };
 };

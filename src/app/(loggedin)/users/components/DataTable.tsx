@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuth } from "@/app/context/AuthProvider";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -17,17 +18,11 @@ import { DataTable } from "@/components/DataTable";
 import { FormDrawer } from "@/components/FormDrawer";
 import { useState } from "react";
 import { FormUsers } from "./Form";
-
 import { useUsers } from "../hooks/useUsers";
-import { deleteUser } from "@/lib/action";
-import { getFirestore, collection } from "firebase/firestore";
-import { useCollection } from "react-firebase-hooks/firestore";
-import { app } from "@/lib/firebase";
-import { useAuth } from "@/app/context/AuthProvider";
 
-type Props = {};
+interface UsersDataTableProps {}
 
-export const UsersDataTable = (props: Props) => {
+export const UsersDataTable: React.FC<UsersDataTableProps> = () => {
   const authContext = useAuth();
   console.log(authContext?.currentUser);
   console.log("isAdmin", authContext?.isAdmin);
@@ -35,15 +30,8 @@ export const UsersDataTable = (props: Props) => {
     return null;
   }
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
-  const [editItem, setEditItem] = useState<User | null>();
-  const [value, loading, error] = useCollection(
-    collection(getFirestore(app), "hooks"),
-    {
-      snapshotListenOptions: { includeMetadataChanges: true },
-    }
-  );
-
-  const { users, refreshUsers } = useUsers();
+  const [editItem, setEditItem] = useState<User | null>(null);
+  const { users, refreshUsers, deleteUser, loading, error } = useUsers();
 
   const columns: ColumnDef<User>[] = [
     {
@@ -76,7 +64,6 @@ export const UsersDataTable = (props: Props) => {
       accessorKey: "phone",
       header: "Phone Number",
     },
-
     {
       accessorKey: "email",
       header: "Email",
@@ -85,29 +72,27 @@ export const UsersDataTable = (props: Props) => {
       accessorKey: "role",
       header: "Role",
     },
-
     {
       header: "Actions",
       id: "actions",
       cell: ({ row }) => {
-        const user1 = row.original;
-        // console.log(user1);
+        const user = row.original;
 
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>.
+                <span className="sr-only">Open menu</span>
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => onEditItem(user1)}>
+              <DropdownMenuItem onClick={() => onEditItem(user)}>
                 Edit
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => onDeleteItem(user1)}>
+              <DropdownMenuItem onClick={() => onDeleteItem(user)}>
                 Delete
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -122,34 +107,36 @@ export const UsersDataTable = (props: Props) => {
     setIsDrawerOpen(true);
   };
 
-  const onDeleteItem = (item: User) => {
-    if (window.confirm("Are you sure")) {
-      deleteUser(item.id);
-
-      () => refreshUsers;
+  const onDeleteItem = async (item: User) => {
+    if (window.confirm("Are you sure?")) {
+      await deleteUser(item);
+      refreshUsers();
     }
   };
 
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error.message}</p>;
+
   return (
-    <div className="container mx-auto py-10 m-4 p-2  w-full">
+    <div className="container mx-auto py-10 m-4 p-2 w-full">
       <FormDrawer
         isOpen={isDrawerOpen}
         onChange={setIsDrawerOpen}
         form={FormUsers}
         item={editItem}
         onClose={() => {
-          setEditItem(undefined);
+          setEditItem(null);
           setIsDrawerOpen(false);
-          () => refreshUsers;
+          refreshUsers();
         }}
       />
       <Button
         variant="outline"
         onClick={() => {
-          setEditItem(undefined);
+          setEditItem(null);
           setIsDrawerOpen(true);
         }}
-        className="m-1 p-4 inline-flex items-center justify-center whitespace-nowrap rounded-md  font-medium  "
+        className="m-1 p-4 inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium"
       >
         Add User
       </Button>

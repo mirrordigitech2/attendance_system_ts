@@ -38,26 +38,26 @@ export default function SideNavbar({}: Props) {
       icon: LayoutDashboard,
       variant: "default",
     },
-    {
-      title: "Schools",
-      href: "/schools",
+    // {
+    //   title: "Schools",
+    //   href: "/schools",
 
-      icon: School,
-      variant: "ghost",
-    },
-    {
-      title: "Students",
-      href: "/students",
-      icon: Book,
-      variant: "ghost",
-    },
+    //   icon: School,
+    //   variant: "ghost",
+    // },
+    // {
+    //   title: "Students",
+    //   href: "/students",
+    //   icon: Book,
+    //   variant: "ghost",
+    // },
 
-    {
-      title: "Courses",
-      href: "/courses",
-      icon: Archive,
-      variant: "ghost",
-    },
+    // {
+    //   title: "Courses",
+    //   href: "/courses",
+    //   icon: Archive,
+    //   variant: "ghost",
+    // },
     // {
     //   title: "Users",
     //   href: "/users",
@@ -68,13 +68,35 @@ export default function SideNavbar({}: Props) {
   ];
   const isAdmin = authContext?.isAdmin;
   if (authContext?.isAdmin) {
-    links.push({
-      title: "Users",
-      href: "/users",
+    links.push(
+      {
+        title: "Users",
+        href: "/users",
 
-      icon: Users2,
-      variant: "ghost",
-    });
+        icon: Users2,
+        variant: "ghost",
+      },
+      {
+        title: "Schools",
+        href: "/schools",
+
+        icon: School,
+        variant: "ghost",
+      },
+      {
+        title: "Students",
+        href: "/students",
+        icon: Book,
+        variant: "ghost",
+      },
+
+      {
+        title: "Courses",
+        href: "/courses",
+        icon: Archive,
+        variant: "ghost",
+      }
+    );
   }
 
   return (

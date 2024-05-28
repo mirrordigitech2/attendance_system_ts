@@ -19,6 +19,7 @@ import { FormDrawer } from "@/components/FormDrawer";
 import { useState } from "react";
 import { FormUsers } from "./Form";
 import { useUsers } from "../hooks/useUsers";
+import Export from "@/components/Export";
 
 interface UsersDataTableProps {}
 
@@ -130,16 +131,19 @@ export const UsersDataTable: React.FC<UsersDataTableProps> = () => {
           refreshUsers();
         }}
       />
-      <Button
-        variant="outline"
-        onClick={() => {
-          setEditItem(null);
-          setIsDrawerOpen(true);
-        }}
-        className="m-1 p-4 inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium"
-      >
-        Add User
-      </Button>
+      <div className="flex justify-between">
+        <Button
+          variant="outline"
+          onClick={() => {
+            setEditItem(null);
+            setIsDrawerOpen(true);
+          }}
+          className="m-1 p-4 inline-flex items-center justify-center whitespace-nowrap rounded-md font-medium"
+        >
+          Add User
+        </Button>
+        <Export items={users} />
+      </div>
       <DataTable columns={columns} data={users} />
     </div>
   );

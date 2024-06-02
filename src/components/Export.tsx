@@ -12,6 +12,8 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
+import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
 import { mkConfig, generateCsv, download } from "export-to-csv";
 
 type Props = {
@@ -46,7 +48,45 @@ export default function Export({ items }: Props) {
   }
 
   //
+  function pdfExport() {
+    const doc = new jsPDF();
+    const tableColumn = [
+      "Name",
+      "Email",
+      "School",
+      "Courses",
+      "Phone",
+      "ID Number",
+      "Role",
+    ];
+    const tableRows: string[][] = [];
+    items.forEach((item) => {
+      const itemData = [
+        item.name,
+        item.email,
+        item.school,
+        item.courses,
+        item.phone.toString(),
+        item.idNum.toString(),
+        item.role,
+      ];
+      tableRows.push(itemData);
+    });
 
+    autoTable(doc, {
+      head: [tableColumn],
+      body: tableRows,
+      startY: 20,
+      // styles: {
+      //   fontSize: 10
+      // },
+      // headStyles: {
+      //   fillColor: [22, 160, 133]
+      // }
+    });
+
+    doc.save("items.pdf");
+  }
   return (
     <div>
       <DropdownMenu>
@@ -64,6 +104,7 @@ export default function Export({ items }: Props) {
             Export CSV
           </CSVLink>
            */}
+          <DropdownMenuItem onClick={pdfExport}>PDF</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

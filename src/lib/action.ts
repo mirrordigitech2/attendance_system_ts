@@ -1,6 +1,6 @@
 "use server";
 
-import { SchoolForm, UserForm } from "./types";
+import { SchoolForm, StudentForm, UserForm } from "./types";
 import { adminDb } from "./firebase_admin";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -120,5 +120,61 @@ export async function createSchool(formData: SchoolForm) {
     console.error("Error creating school:", error);
 
     throw new Error("Failed to create school");
+  }
+}
+//
+export async function deleteStudent(id: string) {
+  const session = await getServerSession(authOptions);
+  const user = session?.user;
+  console.log(user);
+  if (user?.role == "user") {
+    return NextResponse.json({ msg: "msg", code: 403 });
+  }
+  console.log("id", id);
+
+  try {
+    await adminDb.collection("students").doc(id).delete();
+
+    return true;
+  } catch (error) {
+    console.error("Error updating student:", error);
+    // You can throw an error here or handle it based on your preference
+    throw new Error("Failed to update student");
+  }
+}
+
+export async function editStudent(id: string, formData: StudentForm) {
+  const session = await getServerSession(authOptions);
+  const user = session?.user;
+  if (user?.role !== "admin") {
+    // If user is not logged in or not an admin, return msg response
+    return NextResponse.json({ msg: "msg", code: 403 });
+  }
+
+  try {
+    await adminDb.collection("students").doc(id).update(formData);
+
+    return true;
+  } catch (error) {
+    console.error("Error updating Student:", error);
+    throw new Error("Failed to update Student");
+  }
+}
+export async function createStudent(formData: StudentForm) {
+  const session = await getServerSession(authOptions);
+  const user = session?.user;
+  if (!user || user.role !== "admin") {
+    return NextResponse.json({ msg: "msg", code: 403 });
+  }
+
+  console.log("formData", formData);
+  try {
+    await adminDb.collection("students").add(formData);
+
+    return true;
+  } catch (error) {
+    console.error("Error creating Student:", error);
+
+    throw new Error("Failed to create Student");
   }
 }

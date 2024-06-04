@@ -19,14 +19,17 @@ import { useState } from "react";
 import { FormStudents } from "./Form";
 
 import { useStudents } from "../hooks/useStudents";
+import Export from "@/components/(Export Data)/Export";
+import ExportStudent from "@/components/(Export Data)/ExportStudent";
 
-type Props = {};
+interface SchoolsDataTableProps {}
 
-export const StudentsDataTable = (props: Props) => {
+export const StudentsDataTable: React.FC<SchoolsDataTableProps> = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   const [editItem, setEditItem] = useState<Student | null>();
 
-  const { students, refreshStudents, deleteStudent } = useStudents();
+  const { students, refreshStudents, deleteStudent, loading, error } =
+    useStudents();
 
   const columns: ColumnDef<Student>[] = [
     {
@@ -105,13 +108,15 @@ export const StudentsDataTable = (props: Props) => {
     setIsDrawerOpen(true);
   };
 
-  const onDeleteItem = (item: Student) => {
+  const onDeleteItem = async (item: Student) => {
     if (window.confirm("Are you sure")) {
-      deleteStudent(item);
+      await deleteStudent(item);
       () => refreshStudents;
     }
   };
 
+  if (loading) return <p>Loading ...</p>;
+  if (error) return <p>Error:{error.message}</p>;
   return (
     <div className=" container mx-auto py-10 m-4 p-2  w-full">
       <FormDrawer
@@ -125,17 +130,19 @@ export const StudentsDataTable = (props: Props) => {
           () => refreshStudents;
         }}
       />
-      <Button
-        variant="outline"
-        onClick={() => {
-          setEditItem(undefined);
-          setIsDrawerOpen(true);
-        }}
-        className="m-1 p-4 flex items-center justify-center whitespace-nowrap rounded-md  font-medium  "
-      >
-        Add Student
-      </Button>
-
+      <div className="flex justify-between">
+        <Button
+          variant="outline"
+          onClick={() => {
+            setEditItem(null);
+            setIsDrawerOpen(true);
+          }}
+          className="m-1 p-4 flex items-center justify-center whitespace-nowrap rounded-md  font-medium  "
+        >
+          Add Student
+        </Button>
+        <ExportStudent items={students} />
+      </div>
       <DataTable columns={columns} data={students} />
     </div>
   );

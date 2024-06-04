@@ -43,9 +43,6 @@ export const FormStudents = (props: Props) => {
   const itemId = props.item?.id;
   // console.log(props.item);
 
-  //using react hook form and passing the zod schema to it
-  //register function used to link the input data to the schema object
-
   const form = useForm<StudentForm>({
     resolver: zodResolver(StudentSchema),
     ...(props.item && { values: { ...props.item } }),

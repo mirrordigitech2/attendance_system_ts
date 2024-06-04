@@ -1,4 +1,5 @@
-import { db } from "@/lib/firebase";
+"use client";
+
 import { Student, StudentForm } from "@/lib/types";
 import {
   addDoc,
@@ -9,68 +10,55 @@ import {
   query,
   where,
   doc,
+  getFirestore,
 } from "firebase/firestore";
-
+import { useAuth } from "@/app/context/AuthProvider";
+import { app, db } from "@/lib/firebase";
 import { useEffect, useState } from "react";
+import { useCollection } from "react-firebase-hooks/firestore";
+import { useSession } from "next-auth/react";
 
-export const useStudents = () => {
+interface UseStudentsResult {
+  students: Student[];
+  refreshStudents: () => void;
+  deleteStudent: (student: Student) => Promise<void>;
+  loading: boolean;
+  error: Error | undefined;
+}
+
+export const useStudents = (): UseStudentsResult => {
+  const { data: session } = useSession();
+
+  const currentUser = useAuth();
+
+  const isAdmin = useAuth();
   const [students, setStudents] = useState<Student[]>([]);
   const [refereshKey, setRefreshKey] = useState(0);
 
-  const deleteStudent = async (student: Student) => {
-    await deleteDoc(doc(db, "students", student.id));
-  };
+  const [value, loading, error] = useCollection(
+    collection(getFirestore(app), "students"),
+    {
+      snapshotListenOptions: { includeMetadataChanges: true },
+    }
+  );
 
   useEffect(() => {
-    const getStudents = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(db, "students"));
-        const students: Student[] = [];
-        querySnapshot.forEach((doc) => {
-          console.log(doc.id);
-          const studentInfo: Student = {
-            id: doc.id,
-            name: doc.data().name,
-            school: doc.data().school,
-            age: doc.data().age,
-            class1: doc.data().class1,
-            phoneParent: doc.data().phoneParent,
-            address: doc.data().address,
-            courses: doc.data().courses,
-          };
-          students.push(studentInfo);
-        });
-        setStudents(students);
-      } catch (error) {
-        console.error("Error getting documents: ", error);
-      }
-    };
-    getStudents();
+    if (value) {
+      const fetchedStudents: Student[] = value.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as Student[];
+      setStudents(fetchedStudents);
+    }
+  }, [value]);
 
-    const q = query(collection(db, "students"));
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const updatedStudents: Student[] = [];
-      querySnapshot.forEach((doc) => {
-        const updatedStudentInfo: Student = {
-          id: doc.id,
-          name: doc.data().name,
-          school: doc.data().school,
-          age: doc.data().age,
-          class1: doc.data().class1,
-          phoneParent: doc.data().phoneParent,
-          address: doc.data().address,
-          courses: doc.data().courses,
-        };
-        updatedStudents.push(updatedStudentInfo);
-      });
-      setStudents(updatedStudents);
-    });
-
-    return () => unsubscribe();
-  }, [refereshKey]);
-
+  // Function to delete a user and refresh the list
+  const deleteStudent = async (student: Student) => {
+    await deleteDoc(doc(db, "students", student.id));
+    refreshStudents();
+  };
   const refreshStudents = () => {
     setRefreshKey((prevKey) => prevKey + 1);
   };
-  return { students, refreshStudents, deleteStudent };
+  return { students, refreshStudents, deleteStudent, loading, error };
 };

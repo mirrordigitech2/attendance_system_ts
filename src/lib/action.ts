@@ -1,6 +1,6 @@
 "use server";
 
-import { UserForm } from "./types";
+import { SchoolForm, UserForm } from "./types";
 import { adminDb } from "./firebase_admin";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -62,5 +62,63 @@ export async function createUser(formData: UserForm) {
     console.error("Error creating user:", error);
 
     throw new Error("Failed to create user");
+  }
+}
+
+//
+export async function deleteSchool(id: string) {
+  const session = await getServerSession(authOptions);
+  const user = session?.user;
+  console.log(user);
+  if (user?.role == "user") {
+    return NextResponse.json({ msg: "msg", code: 403 });
+  }
+  console.log("id", id);
+
+  try {
+    await adminDb.collection("schools").doc(id).delete();
+
+    return true;
+  } catch (error) {
+    console.error("Error updating school:", error);
+    // You can throw an error here or handle it based on your preference
+    throw new Error("Failed to update school");
+  }
+}
+
+export async function editSchool(id: string, formData: SchoolForm) {
+  const session = await getServerSession(authOptions);
+  const user = session?.user;
+  if (user?.role !== "admin") {
+    // If user is not logged in or not an admin, return msg response
+    return NextResponse.json({ msg: "msg", code: 403 });
+  }
+  console.log("id", id);
+  console.log("formData", formData);
+  try {
+    await adminDb.collection("schools").doc(id).update(formData);
+
+    return true;
+  } catch (error) {
+    console.error("Error updating school:", error);
+    throw new Error("Failed to update school");
+  }
+}
+export async function createSchool(formData: SchoolForm) {
+  const session = await getServerSession(authOptions);
+  const user = session?.user;
+  if (!user || user.role !== "admin") {
+    return NextResponse.json({ msg: "msg", code: 403 });
+  }
+
+  console.log("formData", formData);
+  try {
+    await adminDb.collection("schools").add(formData);
+
+    return true;
+  } catch (error) {
+    console.error("Error creating school:", error);
+
+    throw new Error("Failed to create school");
   }
 }

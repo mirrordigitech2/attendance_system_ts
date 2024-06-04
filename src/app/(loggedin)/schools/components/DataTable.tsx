@@ -19,14 +19,24 @@ import { useState } from "react";
 import { FormSchools } from "./Form";
 
 import { useSchools } from "../hooks/useSchools";
+import { useAuth } from "@/app/context/AuthProvider";
+import ExportSchool from "@/components/(Export Data)/ExportSchool";
 
-type Props = {};
+interface SchoolsDataTableProps {}
 
-export const SchoolsDataTable = (props: Props) => {
+export const SchoolsDataTable: React.FC<SchoolsDataTableProps> = () => {
+  // const authContext = useAuth();
+  // console.log(authContext?.currentUser);
+  // console.log("isAdmin", authContext?.isAdmin);
+  // if (!authContext?.currentUser) {
+  //   return null;
+  // }
+
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   const [editItem, setEditItem] = useState<School | null>();
 
-  const { schools, refreshSchools, deleteSchool } = useSchools();
+  const { schools, refreshSchools, deleteSchool, loading, error } =
+    useSchools();
 
   const columns: ColumnDef<School>[] = [
     {
@@ -49,7 +59,7 @@ export const SchoolsDataTable = (props: Props) => {
       header: "Location",
     },
     {
-      accessorKey: " lecturer",
+      accessorKey: "lecturer",
       header: "Lecturer",
     },
 
@@ -101,12 +111,14 @@ export const SchoolsDataTable = (props: Props) => {
     setIsDrawerOpen(true);
   };
 
-  const onDeleteItem = (item: School) => {
+  const onDeleteItem = async (item: School) => {
     if (window.confirm("Are you sure")) {
-      deleteSchool(item);
+      await deleteSchool(item);
       () => refreshSchools;
     }
   };
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error.message}</p>;
 
   return (
     <div className=" container mx-auto py-10 m-4 p-2  w-full">
@@ -121,17 +133,19 @@ export const SchoolsDataTable = (props: Props) => {
           () => refreshSchools;
         }}
       />
-      <Button
-        variant="outline"
-        onClick={() => {
-          setEditItem(undefined);
-          setIsDrawerOpen(true);
-        }}
-        className="m-1 p-4 flex items-center justify-center whitespace-nowrap rounded-md  font-medium  "
-      >
-        Add School
-      </Button>
-
+      <div className="flex justify-between">
+        <Button
+          variant="outline"
+          onClick={() => {
+            setEditItem(null);
+            setIsDrawerOpen(true);
+          }}
+          className="m-1 p-4 flex items-center justify-center whitespace-nowrap rounded-md  font-medium  "
+        >
+          Add School
+        </Button>
+        <ExportSchool items={schools} />
+      </div>
       <DataTable columns={columns} data={schools} />
     </div>
   );

@@ -28,9 +28,14 @@ export default function Avatar1() {
   console.log("user", user);
 
   return (
-    <div className="flex space-x-2">
-      <h1>Welcome {user?.name}</h1>
-      <div className="flex justify-between sm-hidden">
+    <div className="flex space-x-2 ">
+      <h1
+        className="
+       "
+      >
+        Welcome {user?.name}
+      </h1>
+      <div className="sm-hidden absolute right-14  indent-2 m-22 flex   ">
         <ThemeToggle
           className="ml-4 p-0.1 justify
       "

@@ -1,6 +1,6 @@
 "use client";
 import { useEffect } from "react";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import { CSVLink, CSVDownload } from "react-csv";
 import {
   DropdownMenu,
@@ -11,7 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
+} from "../ui/dropdown-menu";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import { mkConfig, generateCsv, download } from "export-to-csv";

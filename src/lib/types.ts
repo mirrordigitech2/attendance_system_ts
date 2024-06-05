@@ -24,7 +24,7 @@ export interface School {
   id: string;
   name: string;
   location: string;
-  lecturer: string;
+  lecturer: User;
   manager: string;
   phone: number;
   totalStudent: number;

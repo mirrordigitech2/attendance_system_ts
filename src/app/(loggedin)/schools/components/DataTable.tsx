@@ -61,6 +61,7 @@ export const SchoolsDataTable: React.FC<SchoolsDataTableProps> = () => {
     {
       accessorKey: "lecturer",
       header: "Lecturer",
+      cell: ({ row }) => row.original.lecturer?.name || "No Lecturer",
     },
 
     {

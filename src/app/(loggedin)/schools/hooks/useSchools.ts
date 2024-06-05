@@ -2,11 +2,12 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/app/context/AuthProvider";
 import { app, db } from "@/lib/firebase";
-import { School } from "@/lib/types";
+import { School, User } from "@/lib/types";
 import {
   collection,
   deleteDoc,
   doc,
+  getDocs,
   getFirestore,
   query,
   where,
@@ -31,19 +32,6 @@ export const useSchools = (): UseSchoolsResult => {
   const [schools, setSchools] = useState<School[]>([]);
   const [refreshKey, setRefreshKey] = useState(0);
 
-  // // Define a Firestore collection reference
-  // const schoolsCollectionRef = collection(db, "schools");
-
-  // // Apply a query if the user is not an admin, to filter users by email
-
-  // const usersQuery = isAdmin
-  //   ? usersCollectionRef
-  //   : query(usersCollectionRef, where("email", "==", currentUser?.isAdmin));
-
-  //Use useCollection to fetch the data
-  // const [value, loading, error] = useCollection(usersQuery, {
-  //   snapshotListenOptions: { includeMetadataChanges: true },
-  // });
   const [value, loading, error] = useCollection(
     collection(getFirestore(app), "schools"),
     {
@@ -53,14 +41,32 @@ export const useSchools = (): UseSchoolsResult => {
 
   // Update the state when the value changes
   useEffect(() => {
-    if (value) {
-      const fetchedSchools: School[] = value.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as School[];
-      setSchools(fetchedSchools);
-    }
-  }, [value]);
+    const fetchData = async () => {
+      if (value) {
+        try {
+          const usersSnapshot = await getDocs(collection(db, "users"));
+          const usersMap: Record<string, User> = {};
+          usersSnapshot.forEach((doc) => {
+            usersMap[doc.id] = doc.data() as User;
+          });
+
+          const fetchedSchools: School[] = value.docs.map((doc) => {
+            const schoolData = doc.data();
+            return {
+              id: doc.id,
+              ...schoolData,
+              lecturer: usersMap[schoolData.lecturer] || null,
+            } as School;
+          });
+
+          setSchools(fetchedSchools);
+        } catch (err) {
+          console.error("Error fetching data: ", err);
+        }
+      }
+    };
+    fetchData();
+  }, [value, refreshKey]);
 
   // Function to delete a user and refresh the list
   const deleteSchool = async (school: School) => {

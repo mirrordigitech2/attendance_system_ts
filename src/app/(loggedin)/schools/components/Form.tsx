@@ -95,13 +95,14 @@ export const FormSchools = ({ onClose, item }: Props) => {
                   <Select
                     // onValueChange={(value) => field.onChange(value)}
                     onValueChange={field.onChange}
-                    value={field.value}
+                    defaultValue={field.value.name}
                   >
                     <SelectTrigger>
                       <SelectValue>
-                        {item && item !== null
+                        {field.value.name}
+                        {/* {item && item !== null
                           ? item.lecturer.name
-                          : "Select a lecturer"}
+                          : "Select a lecturer"} */}
                         {/* {users.find((user) => user.id === field.value)?.name ||
                           "Select Lecturer"} */}
                       </SelectValue>

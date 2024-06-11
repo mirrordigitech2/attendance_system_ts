@@ -29,7 +29,15 @@ export interface School {
   phone: number;
   totalStudent: number;
 }
-
+export interface Course {
+  id: string;
+  name: string;
+  lecturer: User;
+  school: School;
+  location: string;
+  totalStudent: number;
+}
 export type UserForm = Omit<User, "id">;
 export type StudentForm = Omit<Student, "id">;
 export type SchoolForm = Omit<School, "id">;
+export type CourseForm = Omit<Course, "id">;

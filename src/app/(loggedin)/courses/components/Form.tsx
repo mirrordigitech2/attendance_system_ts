@@ -2,11 +2,11 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { School, SchoolForm } from "@/lib/types";
+import { Course, CourseForm } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { collection, addDoc, setDoc, doc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { SchoolSchema } from "../utils/validation";
+import { CourseSchema } from "../utils/validation";
 import {
   Form,
   FormControl,
@@ -24,29 +24,31 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useUsers } from "../../users/hooks/useUsers";
+import { useSchools } from "../../schools/hooks/useSchools";
 
 type Props = {
   onClose: () => void;
-  item?: School | null;
+  item?: Course | null;
 };
 
-export const FormSchools = (props: Props) => {
+export const FormCourses = (props: Props) => {
   const { users } = useUsers();
+  const { schools } = useSchools();
   const itemId = props.item?.id;
 
-  const form = useForm<SchoolForm>({
-    resolver: zodResolver(SchoolSchema),
+  const form = useForm<CourseForm>({
+    resolver: zodResolver(CourseSchema),
     ...(props.item?.id && { defaultValues: { ...props.item } }),
   });
   console.log("item", props.item?.id);
 
-  const submitData = async (data: SchoolForm) => {
+  const submitData = async (data: CourseForm) => {
     console.log("data", data);
     try {
       if (itemId) {
-        await setDoc(doc(db, "schools", itemId), { ...data });
+        await setDoc(doc(db, "courses", itemId), { ...data });
       } else {
-        await addDoc(collection(db, "schools"), { ...data });
+        await addDoc(collection(db, "courses"), { ...data });
       }
       props.onClose();
     } catch (error) {
@@ -72,19 +74,7 @@ export const FormSchools = (props: Props) => {
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name="location"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Location</FormLabel>
-                  <FormControl>
-                    <Input {...field} type="text" />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+
             <FormField
               control={form.control}
               name="lecturer"
@@ -116,12 +106,28 @@ export const FormSchools = (props: Props) => {
             />
             <FormField
               control={form.control}
-              name="manager"
+              name="school"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Manager</FormLabel>
+                  <FormLabel>School</FormLabel>
                   <FormControl>
-                    <Input {...field} type="text" placeholder="" />
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value ? field.value.name : ""}
+                    >
+                      <SelectTrigger>
+                        <SelectValue>
+                          {field.value ? field.value.name : ""}
+                        </SelectValue>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {schools.map((school) => (
+                          <SelectItem key={school.id} value={school.id}>
+                            {school.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -129,12 +135,12 @@ export const FormSchools = (props: Props) => {
             />
             <FormField
               control={form.control}
-              name="phone"
+              name="location"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Phone</FormLabel>
+                  <FormLabel>Location</FormLabel>
                   <FormControl>
-                    <Input {...field} type="number" placeholder="" />
+                    <Input {...field} type="text" placeholder="" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -148,7 +154,7 @@ export const FormSchools = (props: Props) => {
                   <FormItem>
                     <FormLabel>Total Student</FormLabel>
                     <FormControl>
-                      <Input {...field} type="number" />
+                      <Input {...field} type="text" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

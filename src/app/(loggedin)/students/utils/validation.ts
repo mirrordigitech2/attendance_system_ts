@@ -5,7 +5,7 @@ export const StudentSchema: ZodType<StudentForm> = z.object({
   //id: z.string(),
   name: z.string().min(1, { message: "Name is required!" }),
 
-  school: z.string().min(3, { message: "School is required!" }),
+  school: z.string().min(1, { message: "School is required!" }),
   age: z.coerce.number().min(1, { message: "Age is required!" }),
 
   class1: z.string().min(1, { message: "Class is required!" }),

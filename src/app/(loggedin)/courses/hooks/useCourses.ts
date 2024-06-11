@@ -1,39 +1,42 @@
 "use client";
-import { useEffect, useState } from "react";
-import { useAuth } from "@/app/context/AuthProvider";
-import { app, db } from "@/lib/firebase";
-import { School, User, Student } from "@/lib/types";
+
+import { Course, CourseForm, School, Student, User } from "@/lib/types";
 import {
-  collection,
+  addDoc,
   deleteDoc,
-  doc,
+  collection,
   getDocs,
-  getFirestore,
+  onSnapshot,
   query,
   where,
+  doc,
+  getFirestore,
 } from "firebase/firestore";
+import { useAuth } from "@/app/context/AuthProvider";
+import { app, db } from "@/lib/firebase";
+import { useEffect, useState } from "react";
 import { useCollection } from "react-firebase-hooks/firestore";
 import { useSession } from "next-auth/react";
 
-interface UseSchoolsResult {
-  schools: School[];
-  refreshSchools: () => void;
-  deleteSchool: (school: School) => Promise<void>;
+interface UseCoursesResult {
+  courses: Course[];
+  refreshCourses: () => void;
+  deleteCourse: (course: Course) => Promise<void>;
   loading: boolean;
   error: Error | undefined;
 }
 
-export const useSchools = (): UseSchoolsResult => {
+export const useCourses = (): UseCoursesResult => {
   const { data: session } = useSession();
 
   const currentUser = useAuth();
 
   const isAdmin = useAuth();
-  const [schools, setSchools] = useState<School[]>([]);
+  const [courses, setCourses] = useState<Course[]>([]);
   const [refreshKey, setRefreshKey] = useState(0);
 
   const [value, loading, error] = useCollection(
-    collection(getFirestore(app), "schools"),
+    collection(getFirestore(app), "courses"),
     {
       snapshotListenOptions: { includeMetadataChanges: true },
     }
@@ -49,7 +52,11 @@ export const useSchools = (): UseSchoolsResult => {
           usersSnapshot.forEach((doc) => {
             usersMap[doc.id] = doc.data() as User;
           });
-
+          const schoolsSnapshot = await getDocs(collection(db, "schools"));
+          const schoolsMap: Record<string, School> = {};
+          schoolsSnapshot.forEach((doc) => {
+            schoolsMap[doc.id] = doc.data() as School;
+          });
           // const studentsSnapshot = await getDocs(collection(db, "students"));
           // const studentCountMap: Record<string, number> = {};
           // studentsSnapshot.forEach((doc) => {
@@ -62,16 +69,17 @@ export const useSchools = (): UseSchoolsResult => {
           //   }
           // });
 
-          const fetchedSchools: School[] = value.docs.map((doc) => {
-            const schoolData = doc.data();
+          const fetchedCourses: Course[] = value.docs.map((doc) => {
+            const courseData = doc.data();
             return {
               id: doc.id,
-              ...schoolData,
-              lecturer: usersMap[schoolData.lecturer] || null,
-            } as School;
+              ...courseData,
+              lecturer: usersMap[courseData.lecturer] || null,
+              school: schoolsMap[courseData.school] || null,
+            } as Course;
           });
 
-          setSchools(fetchedSchools);
+          setCourses(fetchedCourses);
         } catch (err) {
           console.error("Error fetching data: ", err);
         }
@@ -81,15 +89,15 @@ export const useSchools = (): UseSchoolsResult => {
   }, [value, refreshKey]);
 
   // Function to delete a user and refresh the list
-  const deleteSchool = async (school: School) => {
-    await deleteDoc(doc(db, "schools", school.id));
-    refreshSchools();
+  const deleteCourse = async (course: Course) => {
+    await deleteDoc(doc(db, "courses", course.id));
+    refreshCourses();
   };
 
   // Function to refresh the users
-  const refreshSchools = () => {
+  const refreshCourses = () => {
     setRefreshKey((prevKey) => prevKey + 1);
   };
 
-  return { schools, refreshSchools, deleteSchool, loading, error };
+  return { courses, refreshCourses, deleteCourse, loading, error };
 };

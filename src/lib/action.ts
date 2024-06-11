@@ -1,6 +1,6 @@
 "use server";
 
-import { SchoolForm, StudentForm, UserForm } from "./types";
+import { SchoolForm, StudentForm, UserForm, CourseForm } from "./types";
 import { adminDb } from "./firebase_admin";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
@@ -176,5 +176,61 @@ export async function createStudent(formData: StudentForm) {
     console.error("Error creating Student:", error);
 
     throw new Error("Failed to create Student");
+  }
+}
+///
+export async function deleteCourse(id: string) {
+  const session = await getServerSession(authOptions);
+  const user = session?.user;
+  console.log(user);
+  if (user?.role == "user") {
+    return NextResponse.json({ msg: "msg", code: 403 });
+  }
+  console.log("id", id);
+
+  try {
+    await adminDb.collection("courses").doc(id).delete();
+
+    return true;
+  } catch (error) {
+    console.error("Error updating courses:", error);
+    // You can throw an error here or handle it based on your preference
+    throw new Error("Failed to update courses");
+  }
+}
+
+export async function editCourse(id: string, formData: CourseForm) {
+  const session = await getServerSession(authOptions);
+  const user = session?.user;
+  if (user?.role !== "admin") {
+    // If user is not logged in or not an admin, return msg response
+    return NextResponse.json({ msg: "msg", code: 403 });
+  }
+
+  try {
+    await adminDb.collection("courses").doc(id).update(formData);
+
+    return true;
+  } catch (error) {
+    console.error("Error updating courses:", error);
+    throw new Error("Failed to update courses");
+  }
+}
+export async function createCourse(formData: CourseForm) {
+  const session = await getServerSession(authOptions);
+  const user = session?.user;
+  if (!user || user.role !== "admin") {
+    return NextResponse.json({ msg: "msg", code: 403 });
+  }
+
+  console.log("formData", formData);
+  try {
+    await adminDb.collection("courses").add(formData);
+
+    return true;
+  } catch (error) {
+    console.error("Error creating courses:", error);
+
+    throw new Error("Failed to create courses");
   }
 }

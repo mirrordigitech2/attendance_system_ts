@@ -9,29 +9,28 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Student } from "@/lib/types";
+import { Course } from "@/lib/types";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 
 import { DataTable } from "@/components/DataTable";
 import { FormDrawer } from "@/components/FormDrawer";
 import { useState } from "react";
-import { FormStudents } from "./Form";
+import { FormCourses } from "./Form";
 
-import { useStudents } from "../hooks/useStudents";
-import Export from "@/components/(Export Data)/Export";
-import ExportStudent from "@/components/(Export Data)/ExportStudent";
+import { useCourses } from "../hooks/useCourses";
+import ExportCourse from "@/components/(Export Data)/ExportCourse";
 
-interface StudentsDataTableProps {}
+interface CoursesDataTableProps {}
 
-export const StudentsDataTable: React.FC<StudentsDataTableProps> = () => {
+export const CoursesDataTable: React.FC<CoursesDataTableProps> = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
-  const [editItem, setEditItem] = useState<Student | null>();
+  const [editItem, setEditItem] = useState<Course | null>();
 
-  const { students, refreshStudents, deleteStudent, loading, error } =
-    useStudents();
+  const { courses, refreshCourses, deleteCourse, loading, error } =
+    useCourses();
 
-  const columns: ColumnDef<Student>[] = [
+  const columns: ColumnDef<Course>[] = [
     {
       accessorKey: "name",
       header: ({ column }) => {
@@ -48,36 +47,31 @@ export const StudentsDataTable: React.FC<StudentsDataTableProps> = () => {
     },
 
     {
-      accessorKey: "school",
-      header: "Schools",
-    },
-    {
-      accessorKey: "age",
-      header: "Age",
-    },
-    {
-      accessorKey: "class1",
-      header: "Class",
+      accessorKey: "lecturer",
+      header: "lecturers",
+      cell: ({ row }) => row.original.lecturer?.name || "No Lecturer",
     },
 
     {
-      accessorKey: "phoneParent",
-      header: "phone Parents",
+      accessorKey: "school",
+      header: "Schools",
+      cell: ({ row }) => row.original.school?.name || "No school",
+    },
+
+    {
+      accessorKey: "location",
+      header: "Location",
     },
     {
-      accessorKey: "address",
-      header: "Address",
-    },
-    {
-      accessorKey: "courses",
-      header: "Courses",
+      accessorKey: "totalStudent",
+      header: "Total Student",
     },
 
     {
       header: "Actions",
       id: "actions",
       cell: ({ row }) => {
-        const student1 = row.original;
+        const course1 = row.original;
 
         return (
           <DropdownMenu>
@@ -89,11 +83,11 @@ export const StudentsDataTable: React.FC<StudentsDataTableProps> = () => {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem onClick={() => onEditItem(student1)}>
+              <DropdownMenuItem onClick={() => onEditItem(course1)}>
                 Edit
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => onDeleteItem(student1)}>
+              <DropdownMenuItem onClick={() => onDeleteItem(course1)}>
                 Delete
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -103,15 +97,15 @@ export const StudentsDataTable: React.FC<StudentsDataTableProps> = () => {
     },
   ];
 
-  const onEditItem = (item: Student) => {
+  const onEditItem = (item: Course) => {
     setEditItem(item);
     setIsDrawerOpen(true);
   };
 
-  const onDeleteItem = async (item: Student) => {
+  const onDeleteItem = async (item: Course) => {
     if (window.confirm("Are you sure")) {
-      await deleteStudent(item);
-      () => refreshStudents;
+      await deleteCourse(item);
+      () => refreshCourses;
     }
   };
 
@@ -122,12 +116,12 @@ export const StudentsDataTable: React.FC<StudentsDataTableProps> = () => {
       <FormDrawer
         isOpen={isDrawerOpen}
         onChange={setIsDrawerOpen}
-        form={FormStudents}
+        form={FormCourses}
         item={editItem}
         onClose={() => {
           setEditItem(undefined);
           setIsDrawerOpen(false);
-          () => refreshStudents;
+          () => refreshCourses;
         }}
       />
       <div className="flex justify-between">
@@ -139,11 +133,11 @@ export const StudentsDataTable: React.FC<StudentsDataTableProps> = () => {
           }}
           className="m-1 p-4 flex items-center justify-center whitespace-nowrap rounded-md  font-medium  "
         >
-          Add Student
+          Add Course
         </Button>
-        <ExportStudent items={students} />
+        <ExportCourse items={courses} />
       </div>
-      <DataTable columns={columns} data={students} />
+      <DataTable columns={columns} data={courses} />
     </div>
   );
 };

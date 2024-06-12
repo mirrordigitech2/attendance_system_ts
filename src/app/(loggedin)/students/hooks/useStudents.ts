@@ -1,6 +1,6 @@
 "use client";
 
-import { Student, StudentForm } from "@/lib/types";
+import { Course, School, Student, StudentForm } from "@/lib/types";
 import {
   addDoc,
   deleteDoc,
@@ -33,7 +33,7 @@ export const useStudents = (): UseStudentsResult => {
 
   const isAdmin = useAuth();
   const [students, setStudents] = useState<Student[]>([]);
-  const [refereshKey, setRefreshKey] = useState(0);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const [value, loading, error] = useCollection(
     collection(getFirestore(app), "students"),
@@ -43,14 +43,39 @@ export const useStudents = (): UseStudentsResult => {
   );
 
   useEffect(() => {
-    if (value) {
-      const fetchedStudents: Student[] = value.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as Student[];
-      setStudents(fetchedStudents);
-    }
-  }, [value]);
+    const fetchData = async () => {
+      if (value) {
+        try {
+          const schoolsSnapshot = await getDocs(collection(db, "schools"));
+          const schoolsMap: Record<string, School> = {};
+          schoolsSnapshot.forEach((doc) => {
+            schoolsMap[doc.id] = doc.data() as School;
+          });
+          const coursesSnapshot = await getDocs(collection(db, "courses"));
+          const coursesMap: Record<string, Course> = {};
+          coursesSnapshot.forEach((doc) => {
+            coursesMap[doc.id] = doc.data() as Course;
+          });
+
+          const fetchedStudents: Student[] = value.docs.map((doc) => {
+            const studentData = doc.data();
+            return {
+              id: doc.id,
+              ...studentData,
+
+              school: schoolsMap[studentData.school] || null,
+              courses: coursesMap[studentData.courses] || null,
+            } as Student;
+          });
+
+          setStudents(fetchedStudents);
+        } catch (err) {
+          console.error("Error fetching data: ", err);
+        }
+      }
+    };
+    fetchData();
+  }, [value, refreshKey]);
 
   // Function to delete a user and refresh the list
   const deleteStudent = async (student: Student) => {

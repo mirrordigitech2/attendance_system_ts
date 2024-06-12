@@ -12,12 +12,12 @@ export interface User {
 export interface Student {
   id: string;
   name: string;
-  school: string;
+  school: School;
   age: number;
   class1: string;
   phoneParent: number;
   address: string;
-  courses: string;
+  courses: Course;
 }
 
 export interface School {

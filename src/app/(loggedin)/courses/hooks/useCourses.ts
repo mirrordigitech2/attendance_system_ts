@@ -57,17 +57,24 @@ export const useCourses = (): UseCoursesResult => {
           schoolsSnapshot.forEach((doc) => {
             schoolsMap[doc.id] = doc.data() as School;
           });
-          // const studentsSnapshot = await getDocs(collection(db, "students"));
-          // const studentCountMap: Record<string, number> = {};
-          // studentsSnapshot.forEach((doc) => {
-          //   const student = doc.data() as Student;
-          //   if (student.school) {
-          //     if (!studentCountMap[student.school]) {
-          //       studentCountMap[student.school] = 0;
-          //     }
-          //     studentCountMap[student.school]++;
-          //   }
-          // });
+
+          const studentsSnapshot = await getDocs(collection(db, "students"));
+
+          const studentCountMap: Record<string, number> = {};
+          studentsSnapshot.forEach((doc) => {
+            const studentData = doc.data() as Student;
+
+            const courseId =
+              typeof studentData.courses === "object"
+                ? studentData.courses.id
+                : studentData.courses;
+            if (courseId) {
+              if (!studentCountMap[courseId]) {
+                studentCountMap[courseId] = 0;
+              }
+              studentCountMap[courseId]++;
+            }
+          });
 
           const fetchedCourses: Course[] = value.docs.map((doc) => {
             const courseData = doc.data();
@@ -76,6 +83,7 @@ export const useCourses = (): UseCoursesResult => {
               ...courseData,
               lecturer: usersMap[courseData.lecturer] || null,
               school: schoolsMap[courseData.school] || null,
+              totalStudent: studentCountMap[doc.id] || 0,
             } as Course;
           });
 
@@ -88,13 +96,11 @@ export const useCourses = (): UseCoursesResult => {
     fetchData();
   }, [value, refreshKey]);
 
-  // Function to delete a user and refresh the list
   const deleteCourse = async (course: Course) => {
     await deleteDoc(doc(db, "courses", course.id));
     refreshCourses();
   };
 
-  // Function to refresh the users
   const refreshCourses = () => {
     setRefreshKey((prevKey) => prevKey + 1);
   };

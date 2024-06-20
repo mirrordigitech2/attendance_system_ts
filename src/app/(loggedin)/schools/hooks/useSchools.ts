@@ -39,7 +39,6 @@ export const useSchools = (): UseSchoolsResult => {
     }
   );
 
-  // Update the state when the value changes
   useEffect(() => {
     const fetchData = async () => {
       if (value) {
@@ -56,7 +55,6 @@ export const useSchools = (): UseSchoolsResult => {
           const studentCountMap: Record<string, number> = {};
           studentsSnapshot.forEach((doc) => {
             const studentData = doc.data() as Student;
-            console.log("Student Data:", studentData); // Debug log
 
             const schoolId =
               typeof studentData.school === "object"
@@ -72,13 +70,12 @@ export const useSchools = (): UseSchoolsResult => {
                 schoolId,
                 "Count:",
                 studentCountMap[schoolId]
-              ); // Debug log
+              );
             }
           });
 
           const fetchedSchools: School[] = schoolsSnapshot.docs.map((doc) => {
             const schoolData = doc.data();
-            console.log("School Data:", schoolData); // Debug log
 
             return {
               id: doc.id,

@@ -50,26 +50,45 @@ export const useSchools = (): UseSchoolsResult => {
             usersMap[doc.id] = doc.data() as User;
           });
 
-          // const studentsSnapshot = await getDocs(collection(db, "students"));
-          // const studentCountMap: Record<string, number> = {};
-          // studentsSnapshot.forEach((doc) => {
-          //   const student = doc.data() as Student;
-          //   if (student.school) {
-          //     if (!studentCountMap[student.school]) {
-          //       studentCountMap[student.school] = 0;
-          //     }
-          //     studentCountMap[student.school]++;
-          //   }
-          // });
+          const schoolsSnapshot = await getDocs(collection(db, "schools"));
+          const studentsSnapshot = await getDocs(collection(db, "students"));
 
-          const fetchedSchools: School[] = value.docs.map((doc) => {
+          const studentCountMap: Record<string, number> = {};
+          studentsSnapshot.forEach((doc) => {
+            const studentData = doc.data() as Student;
+            console.log("Student Data:", studentData); // Debug log
+
+            const schoolId =
+              typeof studentData.school === "object"
+                ? studentData.school.id
+                : studentData.school;
+            if (schoolId) {
+              if (!studentCountMap[schoolId]) {
+                studentCountMap[schoolId] = 0;
+              }
+              studentCountMap[schoolId]++;
+              console.log(
+                "School ID:",
+                schoolId,
+                "Count:",
+                studentCountMap[schoolId]
+              ); // Debug log
+            }
+          });
+
+          const fetchedSchools: School[] = schoolsSnapshot.docs.map((doc) => {
             const schoolData = doc.data();
+            console.log("School Data:", schoolData); // Debug log
+
             return {
               id: doc.id,
               ...schoolData,
+              totalStudent: studentCountMap[doc.id] || 0,
+
               lecturer: usersMap[schoolData.lecturer] || null,
             } as School;
           });
+          console.log("Fetched Schools:", fetchedSchools); // Debug log
 
           setSchools(fetchedSchools);
         } catch (err) {

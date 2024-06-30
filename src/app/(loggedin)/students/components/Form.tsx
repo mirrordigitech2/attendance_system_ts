@@ -35,6 +35,7 @@ import {
 } from "@/components/ui/select";
 import { useSchools } from "../../schools/hooks/useSchools";
 import { useCourses } from "../../courses/hooks/useCourses";
+import { createStudent, editStudent } from "@/lib/action";
 
 type Props = {
   onClose: () => void;
@@ -44,29 +45,51 @@ type Props = {
 export const FormStudents = (props: Props) => {
   const { schools } = useSchools();
   const { courses } = useCourses();
+  const [loading, setLoading] = useState(false);
+
   const itemId = props.item?.id;
-  // console.log(props.item);
 
   const form = useForm<StudentForm>({
     resolver: zodResolver(StudentSchema),
     ...(props.item?.id && { defaultValues: { ...props.item } }),
   });
-
+  console.log("item :  ", props.item?.id);
   const submitData = async (data: StudentForm) => {
+    // try {
+    //   if (itemId) {
+    //     //editDoc
+    //     await setDoc(doc(db, "students", itemId), { ...data }).then(() => {
+    //       console.log("Document updated successfully");
+    //     });
+    //   } else {
+    //     await addDoc(collection(db, "students"), { ...data }).then(() => {
+    //       console.log("Document added successfully");
+    //     });
+    //   }
+    //   props.onClose();
+    // } catch (error) {
+    //   console.error("Error adding document: ", error);
+    // }
+    setLoading(true);
     try {
       if (itemId) {
         //editDoc
-        await setDoc(doc(db, "students", itemId), { ...data }).then(() => {
-          console.log("Document updated successfully");
-        });
+        // await setDoc(doc(db, "users", itemId), { ...data }).then(() => {
+        //   console.log("Document updated successfully");
+        // });
+        const res = await editStudent(itemId, data);
+        console.log(res);
       } else {
-        await addDoc(collection(db, "students"), { ...data }).then(() => {
-          console.log("Document added successfully");
-        });
+        // await addDoc(collection(db, "users"), { ...data }).then(() => {
+        //   console.log("Document added successfully");
+        // });
+        const res = await createStudent(data);
+        console.log(res);
       }
       props.onClose();
     } catch (error) {
-      console.error("Error adding document: ", error);
+      setLoading(false);
+      // console.error("Error adding document: ", error);
     }
   };
 
@@ -152,7 +175,7 @@ export const FormStudents = (props: Props) => {
                   <FormItem>
                     <FormLabel>Phone Parents</FormLabel>
                     <FormControl>
-                      <Input {...field} type="number" placeholder="" />
+                      <Input {...field} type="text" placeholder="" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

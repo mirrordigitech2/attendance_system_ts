@@ -2,11 +2,12 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "@/app/context/AuthProvider";
 import { app, db } from "@/lib/firebase";
-import { User } from "@/lib/types";
+import { Course, School, User } from "@/lib/types";
 import {
   collection,
   deleteDoc,
   doc,
+  getDocs,
   getFirestore,
   query,
   where,
@@ -53,14 +54,39 @@ export const useUsers = (): UseUsersResult => {
 
   // Update the state when the value changes
   useEffect(() => {
-    if (value) {
-      const fetchedUsers: User[] = value.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as User[];
-      setUsers(fetchedUsers);
-    }
-  }, [value]);
+    const fetchData = async () => {
+      if (value) {
+        try {
+          const schoolsSnapshot = await getDocs(collection(db, "schools"));
+          const schoolsMap: Record<string, School> = {};
+          schoolsSnapshot.forEach((doc) => {
+            schoolsMap[doc.id] = doc.data() as School;
+          });
+          const coursesSnapshot = await getDocs(collection(db, "courses"));
+          const coursesMap: Record<string, Course> = {};
+          coursesSnapshot.forEach((doc) => {
+            coursesMap[doc.id] = doc.data() as Course;
+          });
+
+          const fetchedUsers: User[] = value.docs.map((doc) => {
+            const userData = doc.data();
+            return {
+              id: doc.id,
+              ...userData,
+
+              school: schoolsMap[userData.school] || null,
+              courses: coursesMap[userData.courses] || null,
+            } as User;
+          });
+
+          setUsers(fetchedUsers);
+        } catch (err) {
+          console.error("Error fetching data: ", err);
+        }
+      }
+    };
+    fetchData();
+  }, [value, refreshKey]);
 
   // Function to delete a user and refresh the list
   const deleteUser = async (user: User) => {

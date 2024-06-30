@@ -34,6 +34,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { createUser, editUser } from "@/lib/action";
+import { useSchools } from "../../schools/hooks/useSchools";
+import { useCourses } from "../../courses/hooks/useCourses";
 
 type Props = {
   onClose: () => void;
@@ -41,6 +43,8 @@ type Props = {
 };
 
 export const FormUsers = (props: Props) => {
+  const { schools } = useSchools();
+  const { courses } = useCourses();
   const itemId = props.item?.id;
   const [loading, setLoading] = useState(false);
   // console.log(itemId);
@@ -50,9 +54,8 @@ export const FormUsers = (props: Props) => {
 
   const form = useForm<UserForm>({
     resolver: zodResolver(UserSchema),
-    ...(props.item && { values: { ...props.item } }),
+    ...(props.item?.id && { defaultValues: { ...props.item } }),
   });
-
   const submitData = async (data: UserForm) => {
     setLoading(true);
     try {
@@ -117,9 +120,25 @@ export const FormUsers = (props: Props) => {
               name="school"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Schools</FormLabel>
+                  <FormLabel>School</FormLabel>
                   <FormControl>
-                    <Input {...field} type="text" placeholder="" />
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value ? field.value.name : ""}
+                    >
+                      <SelectTrigger>
+                        <SelectValue>
+                          {field.value ? field.value.name : ""}
+                        </SelectValue>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {schools.map((school) => (
+                          <SelectItem key={school.id} value={school.id}>
+                            {school.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -130,9 +149,25 @@ export const FormUsers = (props: Props) => {
               name="courses"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Courses</FormLabel>
+                  <FormLabel>Course</FormLabel>
                   <FormControl>
-                    <Input {...field} type="text" placeholder="" />
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value ? field.value.name : ""}
+                    >
+                      <SelectTrigger>
+                        <SelectValue>
+                          {field.value ? field.value.name : ""}
+                        </SelectValue>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {courses.map((course) => (
+                          <SelectItem key={course.id} value={course.id}>
+                            {course.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -147,7 +182,7 @@ export const FormUsers = (props: Props) => {
                   <FormItem>
                     <FormLabel>Phone</FormLabel>
                     <FormControl>
-                      <Input {...field} type="number" placeholder="" />
+                      <Input {...field} type="text" placeholder="" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

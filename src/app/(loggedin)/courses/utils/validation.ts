@@ -10,7 +10,7 @@ export const CourseSchema: ZodType<CourseForm> = z.object({
   school: z.string().min(1, { message: "School is required!" }),
 
   location: z.string().min(1, { message: "location is required!" }),
-  totalStudent: z.coerce
-    .number()
-    .min(1, { message: "totalStudent is required!" }),
+  // totalStudent: z.coerce
+  //   .number()
+  //   .min(1, { message: "totalStudent is required!" }),
 });

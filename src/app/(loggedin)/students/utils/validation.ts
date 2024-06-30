@@ -9,19 +9,20 @@ export const StudentSchema: ZodType<StudentForm> = z.object({
   age: z.coerce.number().min(1, { message: "Age is required!" }),
 
   class1: z.string().min(1, { message: "Class is required!" }),
+  phoneParent: z.string().min(1, "Phone is required !"),
 
-  phoneParent: z.coerce
-    .number({ invalid_type_error: "Phone Number is required" })
-    .positive()
-    .refine(
-      (value) => {
-        const stringValue = String(value);
-        return stringValue.length === 10 && /^\d+$/.test(stringValue);
-      },
-      {
-        message: "Phone Number must be a 10-digit number",
-      }
-    ),
+  // phoneParent: z.coerce
+  //   .number({ invalid_type_error: "Phone Number is required" })
+  //   .positive()
+  //   .refine(
+  //     (value) => {
+  //       const stringValue = String(value);
+  //       return stringValue.length === 10 && /^\d+$/.test(stringValue);
+  //     },
+  //     {
+  //       message: "Phone Number must be a 10-digit number",
+  //     }
+  //   ),
   address: z.string().min(1, { message: "address is required!" }),
   courses: z.string().min(1, { message: "Course is required!" }),
 });

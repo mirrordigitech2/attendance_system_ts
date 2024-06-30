@@ -37,7 +37,7 @@ export const FormDrawer = <T extends object>(props: Props<T>) => {
     <Drawer open={props.isOpen} onOpenChange={props.onChange}>
       <DrawerContent>
         <DrawerHeader>
-          <DrawerTitle>Add New User</DrawerTitle>
+          <DrawerTitle>Add New </DrawerTitle>
         </DrawerHeader>
         <div className={` m-3`}>
           <props.form item={props.item} onClose={close} />{" "}

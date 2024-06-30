@@ -3,6 +3,7 @@ import React, { useCallback, useState } from "react";
 import {
   Archive,
   Book,
+  Check,
   ChevronRight,
   LayoutDashboard,
   LucideIcon,
@@ -70,10 +71,9 @@ export default function SideNavbar({}: Props) {
   if (authContext?.isAdmin) {
     links.push(
       {
-        title: "Users",
-        href: "/users",
-
-        icon: Users2,
+        title: "Courses",
+        href: "/courses",
+        icon: Archive,
         variant: "ghost",
       },
       {
@@ -84,6 +84,14 @@ export default function SideNavbar({}: Props) {
         variant: "ghost",
       },
       {
+        title: "Users",
+        href: "/users",
+
+        icon: Users2,
+        variant: "ghost",
+      },
+
+      {
         title: "Students",
         href: "/students",
         icon: Book,
@@ -91,9 +99,9 @@ export default function SideNavbar({}: Props) {
       },
 
       {
-        title: "Courses",
-        href: "/courses",
-        icon: Archive,
+        title: "Attendance",
+        href: "/attendanceAdmin",
+        icon: Check,
         variant: "ghost",
       }
     );

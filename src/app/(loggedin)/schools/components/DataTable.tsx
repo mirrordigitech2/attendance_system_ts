@@ -25,13 +25,6 @@ import ExportSchool from "@/components/(Export Data)/ExportSchool";
 interface SchoolsDataTableProps {}
 
 export const SchoolsDataTable: React.FC<SchoolsDataTableProps> = () => {
-  // const authContext = useAuth();
-  // console.log(authContext?.currentUser);
-  // console.log("isAdmin", authContext?.isAdmin);
-  // if (!authContext?.currentUser) {
-  //   return null;
-  // }
-
   const [isDrawerOpen, setIsDrawerOpen] = useState<boolean>(false);
   const [editItem, setEditItem] = useState<School | null>();
 

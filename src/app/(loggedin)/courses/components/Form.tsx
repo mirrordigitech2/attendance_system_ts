@@ -25,6 +25,8 @@ import {
 } from "@/components/ui/select";
 import { useUsers } from "../../users/hooks/useUsers";
 import { useSchools } from "../../schools/hooks/useSchools";
+import { createCourse, editCourse } from "@/lib/action";
+import { useState } from "react";
 
 type Props = {
   onClose: () => void;
@@ -36,26 +38,42 @@ export const FormCourses = (props: Props) => {
   const { schools } = useSchools();
   const itemId = props.item?.id;
 
+  const [loading, setLoading] = useState(false);
+
   const form = useForm<CourseForm>({
     resolver: zodResolver(CourseSchema),
     ...(props.item?.id && { defaultValues: { ...props.item } }),
   });
-  console.log("item", props.item?.id);
+  console.log("item :  ", props.item?.id);
 
+  // const submitData = async (data: CourseForm) => {
+  //   console.log("data", data);
+  //   try {
+  //     if (itemId) {
+  //       await setDoc(doc(db, "courses", itemId), { ...data });
+  //     } else {
+  //       await addDoc(collection(db, "courses"), { ...data });
+  //     }
+  //     props.onClose();
+  //   } catch (error) {
+  //     console.error("Error adding document: ", error);
+  //   }
+  // };
   const submitData = async (data: CourseForm) => {
-    console.log("data", data);
     try {
       if (itemId) {
-        await setDoc(doc(db, "courses", itemId), { ...data });
+        const res = await editCourse(itemId, data);
+        console.log(res);
       } else {
-        await addDoc(collection(db, "courses"), { ...data });
+        const res = await createCourse(data);
+        console.log(res);
       }
       props.onClose();
     } catch (error) {
-      console.error("Error adding document: ", error);
+      setLoading(false);
+      console.log("Error adding document: ", error);
     }
   };
-
   return (
     <div>
       <Form {...form}>
@@ -146,7 +164,7 @@ export const FormCourses = (props: Props) => {
                 </FormItem>
               )}
             />
-            {/* <FormField
+            <FormField
               control={form.control}
               name="totalStudent"
               render={({ field }) => {
@@ -154,13 +172,13 @@ export const FormCourses = (props: Props) => {
                   <FormItem>
                     <FormLabel>Total Student</FormLabel>
                     <FormControl>
-                      <Input {...field} type="text" />
+                      <Input {...field} type="text" disabled />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 );
               }}
-            /> */}
+            />
           </div>
           <Button type="submit" className="w-full">
             Submit

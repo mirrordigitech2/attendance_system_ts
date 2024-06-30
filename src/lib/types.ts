@@ -2,9 +2,9 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  school: string;
-  courses: string;
-  phone: number;
+  school: School;
+  courses: Course;
+  phone: string;
   idNum: number;
   role: "admin" | "user";
 }
@@ -15,7 +15,7 @@ export interface Student {
   school: School;
   age: number;
   class1: string;
-  phoneParent: number;
+  phoneParent: string;
   address: string;
   courses: Course;
 }
@@ -26,7 +26,7 @@ export interface School {
   location: string;
   lecturer: User;
   manager: string;
-  phone: number;
+  phone: string;
   totalStudent: number;
 }
 export interface Course {

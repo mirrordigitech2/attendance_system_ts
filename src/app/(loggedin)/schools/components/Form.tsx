@@ -24,6 +24,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useUsers } from "../../users/hooks/useUsers";
+import { createSchool, editSchool } from "@/lib/action";
+import { useState } from "react";
 
 type Props = {
   onClose: () => void;
@@ -33,6 +35,7 @@ type Props = {
 export const FormSchools = (props: Props) => {
   const { users } = useUsers();
   const itemId = props.item?.id;
+  const [loading, setLoading] = useState(false);
 
   const form = useForm<SchoolForm>({
     resolver: zodResolver(SchoolSchema),
@@ -41,15 +44,17 @@ export const FormSchools = (props: Props) => {
   console.log("item", props.item?.id);
 
   const submitData = async (data: SchoolForm) => {
-    console.log("data", data);
     try {
       if (itemId) {
-        await setDoc(doc(db, "schools", itemId), { ...data });
+        const res = await editSchool(itemId, data);
+        console.log(res);
       } else {
-        await addDoc(collection(db, "schools"), { ...data });
+        const res = await createSchool(data);
+        console.log("res", res);
       }
       props.onClose();
     } catch (error) {
+      setLoading(false);
       console.error("Error adding document: ", error);
     }
   };
@@ -134,13 +139,13 @@ export const FormSchools = (props: Props) => {
                 <FormItem>
                   <FormLabel>Phone</FormLabel>
                   <FormControl>
-                    <Input {...field} type="number" placeholder="" />
+                    <Input {...field} type="text" placeholder="" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            {/* <FormField
+            <FormField
               control={form.control}
               name="totalStudent"
               render={({ field }) => {
@@ -148,13 +153,13 @@ export const FormSchools = (props: Props) => {
                   <FormItem>
                     <FormLabel>Total Student</FormLabel>
                     <FormControl>
-                      <Input {...field} type="number" />
+                      <Input {...field} type="number" disabled />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 );
               }}
-            /> */}
+            />
           </div>
           <Button type="submit" className="w-full">
             Submit

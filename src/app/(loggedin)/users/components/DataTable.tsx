@@ -56,10 +56,12 @@ export const UsersDataTable: React.FC<UsersDataTableProps> = () => {
     {
       accessorKey: "school",
       header: "Schools",
+      cell: ({ row }) => row.original.school?.name || "No school",
     },
     {
       accessorKey: "courses",
       header: "Courses",
+      cell: ({ row }) => row.original.courses?.name || "No courses",
     },
     {
       accessorKey: "phone",

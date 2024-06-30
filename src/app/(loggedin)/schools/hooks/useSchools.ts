@@ -65,12 +65,6 @@ export const useSchools = (): UseSchoolsResult => {
                 studentCountMap[schoolId] = 0;
               }
               studentCountMap[schoolId]++;
-              console.log(
-                "School ID:",
-                schoolId,
-                "Count:",
-                studentCountMap[schoolId]
-              );
             }
           });
 
@@ -85,7 +79,6 @@ export const useSchools = (): UseSchoolsResult => {
               lecturer: usersMap[schoolData.lecturer] || null,
             } as School;
           });
-          console.log("Fetched Schools:", fetchedSchools); // Debug log
 
           setSchools(fetchedSchools);
         } catch (err) {

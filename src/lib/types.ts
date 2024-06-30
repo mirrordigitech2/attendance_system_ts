@@ -37,6 +37,7 @@ export interface Course {
   location: string;
   totalStudent: number;
 }
+
 export type UserForm = Omit<User, "id">;
 export type StudentForm = Omit<Student, "id">;
 export type SchoolForm = Omit<School, "id">;

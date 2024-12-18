@@ -27,6 +27,8 @@ yarn-error.log*
 
 # local env files
 .env*.local
+.env
+/src/config/firebase-admin.json
 
 # vercel
 .vercel

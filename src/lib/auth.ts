@@ -10,10 +10,10 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     jwt: async ({ token, user, account, profile }) => {
-      // console.log("user", user);
-      // console.log("token", token);
+      console.log("JWT callback - User:", user);
+      console.log("JWT callback - Token:", token);
       if (user) {
-        console.log(user.role);
+        console.log("User data in jwt callback:", user);
         return {
           ...token,
           sub: user.id,
@@ -23,6 +23,9 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     session: async ({ session, token, user }) => {
+      console.log("Session callback - Token:", token);
+      console.log("Session callback - Session:", session);
+
       if (session.user) {
         console.log("session.user", session.user);
         console.log("token", token);
@@ -55,22 +58,33 @@ export const authOptions: NextAuthOptions = {
           password: string;
         };
         if (!email || !password) {
+          console.log("Missing email or password");
+
           throw new Error("Please enter an email and password");
         }
         try {
           // query the firestore users collection for the user comparing the email and idNum
           //console.log("USER EMAIL: ", email);
           const pass = Number(password);
+          console.log(
+            "Searching for user with email:",
+            email,
+            "and password:",
+            pass
+          );
           const user = await adminDb
-
             .collection("users")
             .where("email", "==", email)
             .where("idNum", "==", pass)
             .get();
-
-          console.log("user authorize", user.empty);
+          console.log(
+            "Query result:",
+            user.empty ? "No user found" : "User found"
+          );
 
           if (!user.empty) {
+            console.log("User data:", user);
+
             // console.log("user.docs[0].data()", user.docs[0].data());
             return {
               ...user.docs[0].data(),
